@@ -18,17 +18,30 @@ typedef struct matriz {
   int bombasProximas; 
 } Matriz;
 
+typedef struct tempo {
+  int dia;
+  int mes;
+  int ano;
+  int hora;
+  int min;
+  int seg;
+} Tempo;
+
 Matriz** alocarMatriz(int Linhas,int Colunas);
 int geraValorAleatorio(int max);
 void visualizarMatriz(int linhas, int colunas, Matriz** campo);
 int getInt(int min, int max, char str[]);
 void limpaTela();
+Tempo* getTempo();
+void plataBombas(Matriz** campo, int numBombas);
 
 int main(){
 
   int linhas, colunas, numBombas, totalPosicoes;
-  
   Matriz** campo; 
+  Tempo* tempoInicial;
+
+  tempoInicial = getTempo();
 
   printf("Numero de linhas: ");
   scanf("%d", &linhas);
@@ -45,8 +58,34 @@ int main(){
   limpaTela();
 
   visualizarMatriz(linhas, colunas, campo); 
-  
+
+  //printf("Dia: %d Mes: %d Ano: %d Hora: %d Min: %d Seg: %d\n", tempoInicial->dia, tempoInicial->mes, tempoInicial->ano, tempoInicial->hora, tempoInicial->min, tempoInicial->seg);
+
+ 
   return 0;
+}
+
+void plataBombas(Matriz** campo, int numBombas){
+
+}
+
+Tempo* getTempo(){
+  time_t timer;
+  struct tm *horarioLocal;
+  Tempo* t = (Tempo*)malloc(sizeof(Tempo)); 
+
+  time(&timer); // Obtem informações de data e hora
+  horarioLocal = localtime(&timer); // Converte a hora atual para a hora local
+
+
+  t->dia = horarioLocal->tm_mday;
+  t->mes = horarioLocal->tm_mon + 1;
+  t->ano = horarioLocal->tm_year + 1900;
+  t->hora = horarioLocal->tm_hour;
+  t->min  = horarioLocal->tm_min;
+  t->seg  = horarioLocal->tm_sec;
+  
+  return t;
 }
 
 void limpaTela(){
@@ -66,10 +105,11 @@ int getInt(int min, int max, char str[]){
 
 void visualizarMatriz(int linhas, int colunas, Matriz** campo){
 
-  for(size_t i = 0; i < linhas; i++)
+  for(int i = 0; i < linhas; i++)
   {
-    for(size_t j = 0; j < colunas; j++){
-      printf("%d \t", campo[i][j].aberto);
+    printf(" %d \t", i);
+    for(int j = 0; j < colunas; j++){ 
+      printf("[%d] \t", campo[i][j].aberto);
     }
     printf("\n");
   }
@@ -89,11 +129,9 @@ Matriz** alocarMatriz(int Linhas,int Colunas){
 
 int geraValorAleatorio(int max){
   
-   int randomNumber;
-
-  /* initialize random seed: */
+  int randomNumber;
+  
   srand (time(NULL));
-
   randomNumber = rand() % max;
 
   return randomNumber;
