@@ -10,7 +10,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h> 
+#include <stdbool.h>
 
 typedef struct matriz {
   bool bomba;
@@ -28,12 +28,13 @@ typedef struct tempo {
 } Tempo;
 
 Matriz** alocarMatriz(int Linhas,int Colunas);
-int geraValorAleatorio(int max);
-void visualizarMatriz(int linhas, int colunas, Matriz** campo);
+int getRandomNumber(int max);
+void showMatriz(int linhas, int colunas, Matriz** campo);
 int getInt(int min, int max, char str[]);
-void limpaTela();
-Tempo* getTempo();
-void plataBombas(Matriz** campo, int numBombas);
+void clearScreen();
+Tempo* getTime();
+void putBombs(Matriz** campo, int linhas, int colunas, int numBombas);
+void initializeMatriz(int linhas, int colunas, Matriz** campo);
 
 int main(){
 
@@ -41,7 +42,7 @@ int main(){
   Matriz** campo; 
   Tempo* tempoInicial;
 
-  tempoInicial = getTempo();
+  tempoInicial = getTime();
 
   printf("Numero de linhas: ");
   scanf("%d", &linhas);
@@ -53,23 +54,50 @@ int main(){
   printf("Numero de Bombas (1-%d) : ", totalPosicoes);
   numBombas = getInt(1, totalPosicoes, "Digite novamente: ");
   
+  //Aloca e inicializa a matriz
   campo = alocarMatriz(linhas, colunas);
 
-  limpaTela();
+  if(campo == NULL) return 0;
+  
+  clearScreen();
 
-  visualizarMatriz(linhas, colunas, campo); 
+  putBombs(campo, linhas, colunas, numBombas);
 
+  showMatriz(linhas, colunas, campo); 
+    
   //printf("Dia: %d Mes: %d Ano: %d Hora: %d Min: %d Seg: %d\n", tempoInicial->dia, tempoInicial->mes, tempoInicial->ano, tempoInicial->hora, tempoInicial->min, tempoInicial->seg);
-
+  
  
   return 0;
 }
 
-void plataBombas(Matriz** campo, int numBombas){
-
+void initializeMatriz(int linhas, int colunas, Matriz** campo){
+  for(size_t i = 0; i < linhas; i++)
+  {
+    for(size_t j = 0; j < colunas; j++)
+    {
+      campo[i][j].aberto = false;
+      campo[i][j].bomba= false;
+      campo[i][j].bombasProximas = 0;
+    }
+    
+  }
+  
 }
 
-Tempo* getTempo(){
+void putBombs(Matriz** campo, int linhas, int colunas, int numBombas){
+  int total = 0;
+  do{
+    int linha = getRandomNumber(linhas);
+    int coluna = getRandomNumber(colunas);
+    if(!campo[linha][coluna].bomba){
+      campo[linha][coluna].bomba = true;
+      total++;
+    }
+  }while(total!=numBombas);
+}
+
+Tempo* getTime(){
   time_t timer;
   struct tm *horarioLocal;
   Tempo* t = (Tempo*)malloc(sizeof(Tempo)); 
@@ -88,7 +116,7 @@ Tempo* getTempo(){
   return t;
 }
 
-void limpaTela(){
+void clearScreen(){
   system("@cls||clear");
 }
 
@@ -103,31 +131,43 @@ int getInt(int min, int max, char str[]){
   return aux;
 }
 
-void visualizarMatriz(int linhas, int colunas, Matriz** campo){
+void showMatriz(int linhas, int colunas, Matriz** campo){
 
+  printf("     ");
+  for(int j = 0; j < colunas; j++){ 
+    printf(" %d    ", j);
+  }
+  printf("\n\n");
   for(int i = 0; i < linhas; i++)
   {
-    printf(" %d \t", i);
+    printf(" %d   ", i);
     for(int j = 0; j < colunas; j++){ 
-      printf("[%d] \t", campo[i][j].aberto);
+      printf("[%d]   ", campo[i][j].bomba);
     }
-    printf("\n");
+    printf("\n\n");
   }
 
 }
 
-Matriz** alocarMatriz(int Linhas,int Colunas){ 
+Matriz** alocarMatriz(int linhas,int colunas){ 
  
-  Matriz **m = (Matriz**)malloc(Linhas * sizeof(Matriz*)); 
+  Matriz **m = (Matriz**)malloc(linhas * sizeof(Matriz*)); 
  
-  for (int i = 0; i < Linhas; i++){ 
-       m[i] = (Matriz*) malloc(Colunas * sizeof(Matriz)); 
+  for (int i = 0; i < linhas; i++){ 
+       m[i] = (Matriz*) malloc(colunas * sizeof(Matriz)); 
   }
+
+  if (m==NULL) {
+    printf("Memoria insuficiente.\n");
+    return m;
+  }
+
+  initializeMatriz(linhas, colunas, m);
 
   return m; 
 }
 
-int geraValorAleatorio(int max){
+int getRandomNumber(int max){
   
   int randomNumber;
   
