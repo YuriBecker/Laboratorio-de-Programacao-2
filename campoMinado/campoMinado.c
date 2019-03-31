@@ -16,6 +16,7 @@ typedef struct matriz
 {
   bool bomba;
   bool aberto;
+  bool flag;
   int bombasProximas;
 } Matriz;
 
@@ -45,9 +46,11 @@ int getInt(int min, int max, char str[]);
 void clearScreen();
 Tempo *getTime();
 void putBombs(Matriz **campo, GameInfo *gameInfo);
+void locateBombs(GameInfo *gameInfo, Matriz **campo);
 void initializeMatriz(GameInfo *gameInfo, Matriz **campo);
 bool playGame(Matriz **campo, GameInfo *gameInfo);
 bool verifyVictory(Matriz **campo, GameInfo *gameInfo);
+void putFlag(Matriz **campo, GameInfo *gameInfo, int linha, int coluna);
 
 int main()
 {
@@ -61,11 +64,15 @@ int main()
 
   gameInfo = (GameInfo *)malloc(sizeof(GameInfo));
 
-  printf("Numero de linhas: ");
-  scanf("%d", &gameInfo->linhas);
-  printf("Numero de colunas: ");
-  scanf("%d", &gameInfo->colunas);
-
+  gameInfo->perdeu = false;
+  do
+  {
+    clearScreen();
+    printf("Numero de linhas: ");
+    scanf("%d", &gameInfo->linhas);
+    printf("Numero de colunas: ");
+    scanf("%d", &gameInfo->colunas);
+  } while (gameInfo->linhas < 0 || gameInfo->colunas < 0);
   gameInfo->totalPosicoes = gameInfo->linhas * gameInfo->colunas;
 
   printf("Numero de Bombas (1-%d) : ", gameInfo->totalPosicoes);
@@ -78,6 +85,8 @@ int main()
     return 0;
 
   putBombs(campo, gameInfo);
+  locateBombs(gameInfo, campo);
+
   tempoInicial = getTime();
   // 1 == ganhou
   // 0 == perdeu
@@ -90,10 +99,9 @@ int main()
 
 bool playGame(Matriz **campo, GameInfo *gameInfo)
 {
-  int resultado, linha, coluna;
-  bool perdeu = false;
+  int resultado, linha, coluna, opc;
 
-  while (!perdeu)
+  while (!gameInfo->perdeu)
   {
     do
     {
@@ -101,22 +109,45 @@ bool playGame(Matriz **campo, GameInfo *gameInfo)
       showMatriz(gameInfo, campo);
       printf("\nDigite a linha e coluna: ");
       scanf("%d %d", &linha, &coluna);
-    } while (linha < 0 || linha > gameInfo->linhas || coluna < 0 || coluna > gameInfo->colunas);
-    if (campo[linha][coluna].bomba)
+      printf("\nEscolha (1 - Abrir  2 - Colocar/Remover Bandeira) : ");
+      scanf("%d", &opc);
+    } while (linha < 0 || linha >= gameInfo->linhas || coluna < 0 || coluna >= gameInfo->colunas || opc < 1 || opc > 2);
+    if (opc == 1)
     {
-      perdeu = true;
+      if (campo[linha][coluna].bomba)
+      {
+        gameInfo->perdeu = true;
+      }
+      else
+      {
+        if (campo[linha][coluna].flag == false)
+        {
+          campo[linha][coluna].aberto = true;
+          //openAroud(campo, linha, coluna)
+          if (verifyVictory(campo, gameInfo))
+          {
+            return true;
+          }
+        }
+      }
     }
     else
     {
-      campo[linha][coluna].aberto = true;
-      if (verifyVictory(campo, gameInfo))
-      {
-        return true;
-      }
+      putFlag(campo, gameInfo, linha, coluna);
     }
   }
   // 0 == perdeu
   return false;
+}
+
+void putFlag(Matriz **campo, GameInfo *gameInfo, int linha, int coluna)
+{
+  if (linha >= 0 && linha < gameInfo->linhas && coluna >= 0 && coluna < gameInfo->colunas)
+    if (campo[linha][coluna].aberto == false)
+      if (campo[linha][coluna].flag == true)
+        campo[linha][coluna].flag = false;
+      else
+        campo[linha][coluna].flag = true;
 }
 
 bool verifyVictory(Matriz **campo, GameInfo *gameInfo)
@@ -139,6 +170,39 @@ bool verifyVictory(Matriz **campo, GameInfo *gameInfo)
     return false;
 }
 
+void locateBombs(GameInfo *gameInfo, Matriz **campo)
+{
+  for (size_t linha = 0; linha < gameInfo->linhas; linha++)
+  {
+    for (size_t coluna = 0; coluna < gameInfo->colunas; coluna++)
+    {
+      if (!campo[linha][coluna].bomba)
+      {
+        int total = 0;
+        if (linha > 0 && campo[linha - 1][coluna].bomba)
+          total++;
+        if (linha < gameInfo->linhas - 1 && campo[linha + 1][coluna].bomba)
+          total++;
+        if (coluna > 0 && campo[linha][coluna - 1].bomba)
+          total++;
+        if (coluna < gameInfo->colunas - 1 && campo[linha][coluna + 1].bomba)
+          total++;
+        if (coluna > 0 && linha > 0 && campo[linha - 1][coluna - 1].bomba)
+          total++;
+        if (linha > 0 && coluna < gameInfo->colunas - 1 && campo[linha - 1][coluna + 1].bomba)
+          total++;
+        if (coluna > 0 && linha < gameInfo->linhas - 1 && campo[linha + 1][coluna - 1].bomba)
+          total++;
+        if (linha < gameInfo->linhas - 1 && coluna < gameInfo->colunas - 1 && campo[linha + 1][coluna + 1].bomba)
+          total++;
+        campo[linha][coluna].bombasProximas = total;
+      }
+      else
+        campo[linha][coluna].bombasProximas = -1;
+    }
+  }
+}
+
 void initializeMatriz(GameInfo *gameInfo, Matriz **campo)
 {
   for (size_t i = 0; i < gameInfo->linhas; i++)
@@ -148,6 +212,7 @@ void initializeMatriz(GameInfo *gameInfo, Matriz **campo)
       campo[i][j].aberto = false;
       campo[i][j].bomba = false;
       campo[i][j].bombasProximas = 0;
+      campo[i][j].flag = false;
     }
   }
 }
@@ -219,7 +284,15 @@ void showMatriz(GameInfo *gameInfo, Matriz **campo)
     printf(" %d   ", i);
     for (int j = 0; j < gameInfo->colunas; j++)
     {
-      printf("[%d]   ", campo[i][j].bomba);
+      if (campo[i][j].flag)
+        printf("[P]   ");
+      else if (campo[i][j].aberto)
+        if (campo[i][j].bombasProximas != 0)
+          printf("[%d]   ", campo[i][j].bombasProximas);
+        else
+          printf("[ ]   ");
+      else
+        printf("[X]   ");
     }
     printf("\n\n");
   }
@@ -248,10 +321,5 @@ Matriz **alocarMatriz(GameInfo *gameInfo)
 
 int getRandomNumber(int max)
 {
-
-  int randomNumber;
-
-  randomNumber = rand() % max;
-
-  return randomNumber;
+  return rand() % max;
 }
