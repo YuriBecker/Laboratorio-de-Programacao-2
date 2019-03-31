@@ -19,6 +19,15 @@ typedef struct matriz
   int bombasProximas;
 } Matriz;
 
+typedef struct gameInfo
+{
+  int linhas;
+  int colunas;
+  int numBombas;
+  int totalPosicoes;
+  bool perdeu;
+} GameInfo;
+
 typedef struct tempo
 {
   int dia;
@@ -29,55 +38,112 @@ typedef struct tempo
   int seg;
 } Tempo;
 
-Matriz **alocarMatriz(int Linhas, int Colunas);
+Matriz **alocarMatriz(GameInfo *gameInfo);
 int getRandomNumber(int max);
-void showMatriz(int linhas, int colunas, Matriz **campo);
+void showMatriz(GameInfo *gameInfo, Matriz **campo);
 int getInt(int min, int max, char str[]);
 void clearScreen();
 Tempo *getTime();
-void putBombs(Matriz **campo, int linhas, int colunas, int numBombas);
-void initializeMatriz(int linhas, int colunas, Matriz **campo);
+void putBombs(Matriz **campo, GameInfo *gameInfo);
+void initializeMatriz(GameInfo *gameInfo, Matriz **campo);
+bool playGame(Matriz **campo, GameInfo *gameInfo);
+bool verifyVictory(Matriz **campo, GameInfo *gameInfo);
 
 int main()
 {
 
-  int linhas, colunas, numBombas, totalPosicoes;
+  GameInfo *gameInfo;
   Matriz **campo;
   Tempo *tempoInicial;
+  int resultado;
 
   srand(time(0));
 
+  gameInfo = (GameInfo *)malloc(sizeof(GameInfo));
+
   printf("Numero de linhas: ");
-  scanf("%d", &linhas);
+  scanf("%d", &gameInfo->linhas);
   printf("Numero de colunas: ");
-  scanf("%d", &colunas);
+  scanf("%d", &gameInfo->colunas);
 
-  totalPosicoes = linhas * colunas;
+  gameInfo->totalPosicoes = gameInfo->linhas * gameInfo->colunas;
 
-  printf("Numero de Bombas (1-%d) : ", totalPosicoes);
-  numBombas = getInt(1, totalPosicoes, "Digite novamente: ");
+  printf("Numero de Bombas (1-%d) : ", gameInfo->totalPosicoes);
+  gameInfo->numBombas = getInt(1, gameInfo->totalPosicoes, "Digite novamente: ");
 
   //Aloca e inicializa a matriz
-  campo = alocarMatriz(linhas, colunas);
+  campo = alocarMatriz(gameInfo);
   //Verifica se deu certo
   if (campo == NULL)
     return 0;
 
-  putBombs(campo, linhas, colunas, numBombas);
-  clearScreen();
+  putBombs(campo, gameInfo);
   tempoInicial = getTime();
-  showMatriz(linhas, colunas, campo);
-
+  // 1 == ganhou
+  // 0 == perdeu
+  resultado = playGame(campo, gameInfo);
   //printf("Dia: %d Mes: %d Ano: %d Hora: %d Min: %d Seg: %d\n", tempoInicial->dia, tempoInicial->mes, tempoInicial->ano, tempoInicial->hora, tempoInicial->min, tempoInicial->seg);
-
+  clearScreen();
+  printf("%d\n", resultado);
   return 0;
 }
 
-void initializeMatriz(int linhas, int colunas, Matriz **campo)
+bool playGame(Matriz **campo, GameInfo *gameInfo)
 {
-  for (size_t i = 0; i < linhas; i++)
+  int resultado, linha, coluna;
+  bool perdeu = false;
+
+  while (!perdeu)
   {
-    for (size_t j = 0; j < colunas; j++)
+    do
+    {
+      clearScreen();
+      showMatriz(gameInfo, campo);
+      printf("\nDigite a linha e coluna: ");
+      scanf("%d %d", &linha, &coluna);
+    } while (linha < 0 || linha > gameInfo->linhas || coluna < 0 || coluna > gameInfo->colunas);
+    if (campo[linha][coluna].bomba)
+    {
+      perdeu = true;
+    }
+    else
+    {
+      campo[linha][coluna].aberto = true;
+      if (verifyVictory(campo, gameInfo))
+      {
+        return true;
+      }
+    }
+  }
+  // 0 == perdeu
+  return false;
+}
+
+bool verifyVictory(Matriz **campo, GameInfo *gameInfo)
+{
+  int count = 0;
+  int total = gameInfo->linhas * gameInfo->colunas - gameInfo->numBombas;
+  for (size_t l = 0; l < gameInfo->linhas; l++)
+  {
+    for (size_t c = 0; c < gameInfo->colunas; c++)
+    {
+      if (campo[l][c].aberto)
+      {
+        count++;
+      }
+    }
+  }
+  if (count == total)
+    return true;
+  else
+    return false;
+}
+
+void initializeMatriz(GameInfo *gameInfo, Matriz **campo)
+{
+  for (size_t i = 0; i < gameInfo->linhas; i++)
+  {
+    for (size_t j = 0; j < gameInfo->colunas; j++)
     {
       campo[i][j].aberto = false;
       campo[i][j].bomba = false;
@@ -86,19 +152,19 @@ void initializeMatriz(int linhas, int colunas, Matriz **campo)
   }
 }
 
-void putBombs(Matriz **campo, int linhas, int colunas, int numBombas)
+void putBombs(Matriz **campo, GameInfo *gameInfo)
 {
   int total = 0;
   do
   {
-    int linha = getRandomNumber(linhas);
-    int coluna = getRandomNumber(colunas);
+    int linha = getRandomNumber(gameInfo->linhas);
+    int coluna = getRandomNumber(gameInfo->colunas);
     if (!campo[linha][coluna].bomba)
     {
       campo[linha][coluna].bomba = true;
       total++;
     }
-  } while (total < numBombas);
+  } while (total < gameInfo->numBombas);
 }
 
 Tempo *getTime()
@@ -139,19 +205,19 @@ int getInt(int min, int max, char str[])
   return aux;
 }
 
-void showMatriz(int linhas, int colunas, Matriz **campo)
+void showMatriz(GameInfo *gameInfo, Matriz **campo)
 {
 
   printf("     ");
-  for (int j = 0; j < colunas; j++)
+  for (int j = 0; j < gameInfo->colunas; j++)
   {
     printf(" %d    ", j);
   }
   printf("\n\n");
-  for (int i = 0; i < linhas; i++)
+  for (int i = 0; i < gameInfo->linhas; i++)
   {
     printf(" %d   ", i);
-    for (int j = 0; j < colunas; j++)
+    for (int j = 0; j < gameInfo->colunas; j++)
     {
       printf("[%d]   ", campo[i][j].bomba);
     }
@@ -159,14 +225,14 @@ void showMatriz(int linhas, int colunas, Matriz **campo)
   }
 }
 
-Matriz **alocarMatriz(int linhas, int colunas)
+Matriz **alocarMatriz(GameInfo *gameInfo)
 {
 
-  Matriz **m = (Matriz **)malloc(linhas * sizeof(Matriz *));
+  Matriz **m = (Matriz **)malloc(gameInfo->linhas * sizeof(Matriz *));
 
-  for (int i = 0; i < linhas; i++)
+  for (int i = 0; i < gameInfo->linhas; i++)
   {
-    m[i] = (Matriz *)malloc(colunas * sizeof(Matriz));
+    m[i] = (Matriz *)malloc(gameInfo->colunas * sizeof(Matriz));
   }
 
   if (m == NULL)
@@ -175,7 +241,7 @@ Matriz **alocarMatriz(int linhas, int colunas)
     return m;
   }
 
-  initializeMatriz(linhas, colunas, m);
+  initializeMatriz(gameInfo, m);
 
   return m;
 }
