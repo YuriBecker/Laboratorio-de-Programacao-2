@@ -16,6 +16,7 @@ typedef struct matriz
 {
   bool bomba;
   bool aberto;
+  bool checked;
   bool flag;
   int bombasProximas;
 } Matriz;
@@ -51,6 +52,7 @@ void initializeMatriz(GameInfo *gameInfo, Matriz **campo);
 bool playGame(Matriz **campo, GameInfo *gameInfo);
 bool verifyVictory(Matriz **campo, GameInfo *gameInfo);
 void putFlag(Matriz **campo, GameInfo *gameInfo, int linha, int coluna);
+void openAround(Matriz **campo, int linha, int coluna, GameInfo *gameInfo);
 
 int main()
 {
@@ -123,7 +125,8 @@ bool playGame(Matriz **campo, GameInfo *gameInfo)
         if (campo[linha][coluna].flag == false)
         {
           campo[linha][coluna].aberto = true;
-          //openAroud(campo, linha, coluna)
+          if (campo[linha][coluna].bombasProximas == 0)
+            openAround(campo, linha, coluna, gameInfo);
           if (verifyVictory(campo, gameInfo))
           {
             return true;
@@ -138,6 +141,28 @@ bool playGame(Matriz **campo, GameInfo *gameInfo)
   }
   // 0 == perdeu
   return false;
+}
+
+void openAround(Matriz **campo, int linha, int coluna, GameInfo *gameInfo)
+{
+  if (linha < 0 || coluna < 0 || coluna >= gameInfo->colunas || linha >= gameInfo->linhas)
+    return;
+  if (campo[linha][coluna].bomba == true || campo[linha][coluna].checked == true)
+    return;
+  campo[linha][coluna].aberto = campo[linha][coluna].checked = true;
+  campo[linha][coluna].flag = false;
+
+  if (campo[linha][coluna].bombasProximas == 0)
+  {
+    openAround(campo, linha + 1, coluna, gameInfo);
+    openAround(campo, linha, coluna + 1, gameInfo);
+    openAround(campo, linha - 1, coluna, gameInfo);
+    openAround(campo, linha, coluna - 1, gameInfo);
+    openAround(campo, linha + 1, coluna - 1, gameInfo);
+    openAround(campo, linha - 1, coluna + 1, gameInfo);
+    openAround(campo, linha + 1, coluna + 1, gameInfo);
+    openAround(campo, linha - 1, coluna - 1, gameInfo);
+  }
 }
 
 void putFlag(Matriz **campo, GameInfo *gameInfo, int linha, int coluna)
@@ -213,6 +238,7 @@ void initializeMatriz(GameInfo *gameInfo, Matriz **campo)
       campo[i][j].bomba = false;
       campo[i][j].bombasProximas = 0;
       campo[i][j].flag = false;
+      campo[i][j].checked = false;
     }
   }
 }
@@ -276,7 +302,7 @@ void showMatriz(GameInfo *gameInfo, Matriz **campo)
   printf("     ");
   for (int j = 0; j < gameInfo->colunas; j++)
   {
-    printf(" %d    ", j);
+    printf(" %d  ", j);
   }
   printf("\n\n");
   for (int i = 0; i < gameInfo->linhas; i++)
@@ -285,14 +311,14 @@ void showMatriz(GameInfo *gameInfo, Matriz **campo)
     for (int j = 0; j < gameInfo->colunas; j++)
     {
       if (campo[i][j].flag)
-        printf("[P]   ");
+        printf("[P] ");
       else if (campo[i][j].aberto)
         if (campo[i][j].bombasProximas != 0)
-          printf("[%d]   ", campo[i][j].bombasProximas);
+          printf("[%d] ", campo[i][j].bombasProximas);
         else
-          printf("[ ]   ");
+          printf("[ ] ");
       else
-        printf("[X]   ");
+        printf("[-] ");
     }
     printf("\n\n");
   }
