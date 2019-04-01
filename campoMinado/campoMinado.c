@@ -164,7 +164,7 @@ void openAround(Matriz **campo, int linha, int coluna, GameInfo *gameInfo)
 {
   if (linha < 0 || coluna < 0 || coluna >= gameInfo->colunas || linha >= gameInfo->linhas)
     return;
-  if (campo[linha][coluna].bomba == true || campo[linha][coluna].checked == true)
+  if (campo[linha][coluna].bomba == true || campo[linha][coluna].checked == true || campo[linha][coluna].flag)
     return;
   campo[linha][coluna].aberto = campo[linha][coluna].checked = true;
   campo[linha][coluna].flag = false;
