@@ -53,6 +53,7 @@ bool playGame(Matriz **campo, GameInfo *gameInfo);
 bool verifyVictory(Matriz **campo, GameInfo *gameInfo);
 void putFlag(Matriz **campo, GameInfo *gameInfo, int linha, int coluna);
 void openAround(Matriz **campo, int linha, int coluna, GameInfo *gameInfo);
+void header();
 
 int main()
 {
@@ -93,8 +94,9 @@ int main()
   // 1 == ganhou
   // 0 == perdeu
   resultado = playGame(campo, gameInfo);
-  //printf("Dia: %d Mes: %d Ano: %d Hora: %d Min: %d Seg: %d\n", tempoInicial->dia, tempoInicial->mes, tempoInicial->ano, tempoInicial->hora, tempoInicial->min, tempoInicial->seg);
   clearScreen();
+  showMatriz(gameInfo, campo);
+  //printf("Dia: %d Mes: %d Ano: %d Hora: %d Min: %d Seg: %d\n", tempoInicial->dia, tempoInicial->mes, tempoInicial->ano, tempoInicial->hora, tempoInicial->min, tempoInicial->seg);
   printf("%d\n", resultado);
   return 0;
 }
@@ -119,6 +121,7 @@ bool playGame(Matriz **campo, GameInfo *gameInfo)
       if (campo[linha][coluna].bomba)
       {
         gameInfo->perdeu = true;
+        campo[linha][coluna].aberto = true;
       }
       else
       {
@@ -141,6 +144,11 @@ bool playGame(Matriz **campo, GameInfo *gameInfo)
   }
   // 0 == perdeu
   return false;
+}
+
+void header()
+{
+  printf("\n\n CAMPO MINADO - YURI BECKER\n\n\n");
 }
 
 void openAround(Matriz **campo, int linha, int coluna, GameInfo *gameInfo)
@@ -298,7 +306,7 @@ int getInt(int min, int max, char str[])
 
 void showMatriz(GameInfo *gameInfo, Matriz **campo)
 {
-
+  header();
   printf("     ");
   for (int j = 0; j < gameInfo->colunas; j++)
   {
@@ -313,7 +321,9 @@ void showMatriz(GameInfo *gameInfo, Matriz **campo)
       if (campo[i][j].flag)
         printf("[P] ");
       else if (campo[i][j].aberto)
-        if (campo[i][j].bombasProximas != 0)
+        if (campo[i][j].bomba)
+          printf("[B] ");
+        else if (campo[i][j].bombasProximas > 0)
           printf("[%d] ", campo[i][j].bombasProximas);
         else
           printf("[ ] ");
