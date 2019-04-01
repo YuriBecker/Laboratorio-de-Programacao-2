@@ -30,22 +30,11 @@ typedef struct gameInfo
   bool perdeu;
 } GameInfo;
 
-typedef struct tempo
-{
-  int dia;
-  int mes;
-  int ano;
-  int hora;
-  int min;
-  int seg;
-} Tempo;
-
 Matriz **alocarMatriz(GameInfo *gameInfo);
 int getRandomNumber(int max);
 void showMatriz(GameInfo *gameInfo, Matriz **campo);
 int getInt(int min, int max, char str[]);
 void clearScreen();
-Tempo *getTime();
 void putBombs(Matriz **campo, GameInfo *gameInfo);
 void locateBombs(GameInfo *gameInfo, Matriz **campo);
 void initializeMatriz(GameInfo *gameInfo, Matriz **campo);
@@ -63,14 +52,15 @@ int main()
 
   GameInfo *gameInfo;
   Matriz **campo;
-  Tempo *tempoInicial;
+  time_t start_t, end_t;
+  double duracao;
   int resultado;
 
   srand(time(0));
 
   gameInfo = (GameInfo *)malloc(sizeof(GameInfo));
-
   gameInfo->perdeu = false;
+
   do
   {
     clearScreen();
@@ -89,20 +79,20 @@ int main()
   //Verifica se deu certo
   if (campo == NULL)
     return 0;
-
   putBombs(campo, gameInfo);
   locateBombs(gameInfo, campo);
-
-  tempoInicial = getTime();
-  // 1 == ganhou
-  // 0 == perdeu
+  //Salva o tempo inicial
+  time(&start_t);
+  //loop principal do game
   resultado = playGame(campo, gameInfo);
   if (resultado)
     winScreeen();
   else
     loseScreen();
-  //printf("Dia: %d Mes: %d Ano: %d Hora: %d Min: %d Seg: %d\n", tempoInicial->dia, tempoInicial->mes, tempoInicial->ano, tempoInicial->hora, tempoInicial->min, tempoInicial->seg);
-
+  //Salva o tempo final
+  time(&end_t);
+  duracao = difftime(end_t, start_t);
+  printf(" Duracao da partida = %0.f segundos\n\n", duracao);
   return 0;
 }
 
@@ -294,25 +284,6 @@ void putBombs(Matriz **campo, GameInfo *gameInfo)
       total++;
     }
   } while (total < gameInfo->numBombas);
-}
-
-Tempo *getTime()
-{
-  time_t timer;
-  struct tm *horarioLocal;
-  Tempo *t = (Tempo *)malloc(sizeof(Tempo));
-
-  time(&timer);                     // Obtem informações de data e hora
-  horarioLocal = localtime(&timer); // Converte a hora atual para a hora local
-
-  t->dia = horarioLocal->tm_mday;
-  t->mes = horarioLocal->tm_mon + 1;
-  t->ano = horarioLocal->tm_year + 1900;
-  t->hora = horarioLocal->tm_hour;
-  t->min = horarioLocal->tm_min;
-  t->seg = horarioLocal->tm_sec;
-
-  return t;
 }
 
 void clearScreen()
