@@ -55,6 +55,8 @@ bool verifyVictory(Matriz **campo, GameInfo *gameInfo);
 void putFlag(Matriz **campo, GameInfo *gameInfo, int linha, int coluna);
 void openAround(Matriz **campo, int linha, int coluna, GameInfo *gameInfo);
 void header();
+void winScreeen();
+void loseScreen();
 
 int main()
 {
@@ -95,7 +97,10 @@ int main()
   // 1 == ganhou
   // 0 == perdeu
   resultado = playGame(campo, gameInfo);
-
+  if (resultado)
+    winScreeen();
+  else
+    loseScreen();
   //printf("Dia: %d Mes: %d Ano: %d Hora: %d Min: %d Seg: %d\n", tempoInicial->dia, tempoInicial->mes, tempoInicial->ano, tempoInicial->hora, tempoInicial->min, tempoInicial->seg);
 
   return 0;
@@ -132,6 +137,8 @@ bool playGame(Matriz **campo, GameInfo *gameInfo)
             openAround(campo, linha, coluna, gameInfo);
           if (verifyVictory(campo, gameInfo))
           {
+            clearScreen();
+            showMatriz(gameInfo, campo);
             return true;
           }
         }
@@ -151,6 +158,16 @@ bool playGame(Matriz **campo, GameInfo *gameInfo)
 void header()
 {
   printf("\n\n CAMPO MINADO - YURI BECKER\n\n\n");
+}
+
+void winScreeen()
+{
+  printf("\n VOCE GANHOU!!\n\n");
+}
+
+void loseScreen()
+{
+  printf("\n VOCE PERDEU!!\n\n");
 }
 
 void openAround(Matriz **campo, int linha, int coluna, GameInfo *gameInfo)
