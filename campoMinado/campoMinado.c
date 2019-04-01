@@ -49,7 +49,6 @@ void loseScreen();
 
 int main()
 {
-
   GameInfo *gameInfo;
   Matriz **campo;
   time_t start_t, end_t;
@@ -147,7 +146,7 @@ bool playGame(Matriz **campo, GameInfo *gameInfo)
 
 void header()
 {
-  printf("\n\n CAMPO MINADO - YURI BECKER\n\n\n");
+  printf("\n CAMPO MINADO - YURI BECKER\n\n\n");
 }
 
 void winScreeen()
@@ -168,7 +167,6 @@ void openAround(Matriz **campo, int linha, int coluna, GameInfo *gameInfo)
     return;
   campo[linha][coluna].aberto = campo[linha][coluna].checked = true;
   campo[linha][coluna].flag = false;
-
   if (campo[linha][coluna].bombasProximas == 0)
   {
     openAround(campo, linha + 1, coluna, gameInfo);
@@ -313,26 +311,39 @@ void showMatriz(GameInfo *gameInfo, Matriz **campo)
   {
     printf(" %d  ", j);
   }
+  printf("\n    ");
+  for (int j = 0; j < gameInfo->colunas; j++)
+  {
+    printf("____");
+  }
+  printf("__");
   printf("\n\n");
   for (int i = 0; i < gameInfo->linhas; i++)
   {
-    printf(" %d   ", i);
+    printf(" %d | ", i);
     for (int j = 0; j < gameInfo->colunas; j++)
     {
       if (campo[i][j].flag)
-        printf("[P] ");
+        printf(" P  ");
       else if (campo[i][j].aberto)
         if (campo[i][j].bomba)
-          printf("[B] ");
+          printf(" B  ");
         else if (campo[i][j].bombasProximas > 0)
-          printf("[%d] ", campo[i][j].bombasProximas);
+          printf(" %d  ", campo[i][j].bombasProximas);
         else
-          printf("[ ] ");
+          printf("    ");
       else
-        printf("[-] ");
+        printf(" -  ");
     }
-    printf("\n\n");
+    printf(" |");
+    printf("\n");
   }
+  printf("    ");
+  for (int j = 0; j < gameInfo->colunas; j++)
+  {
+    printf("____");
+  }
+  printf("__\n\n");
 }
 
 Matriz **alocarMatriz(GameInfo *gameInfo)
