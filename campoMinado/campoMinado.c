@@ -320,7 +320,11 @@ void showMatriz(GameInfo *gameInfo, Matriz **campo)
   printf("\n\n");
   for (int i = 0; i < gameInfo->linhas; i++)
   {
-    printf(" %d | ", i);
+    if (i < 10)
+      printf(" %d | ", i);
+    else
+      printf(" %d| ", i);
+
     for (int j = 0; j < gameInfo->colunas; j++)
     {
       if (campo[i][j].flag)
