@@ -49,6 +49,7 @@ Tempo *getTime();
 void putBombs(Matriz **campo, GameInfo *gameInfo);
 void locateBombs(GameInfo *gameInfo, Matriz **campo);
 void initializeMatriz(GameInfo *gameInfo, Matriz **campo);
+void openAll(GameInfo *gameInfo, Matriz **campo);
 bool playGame(Matriz **campo, GameInfo *gameInfo);
 bool verifyVictory(Matriz **campo, GameInfo *gameInfo);
 void putFlag(Matriz **campo, GameInfo *gameInfo, int linha, int coluna);
@@ -94,10 +95,9 @@ int main()
   // 1 == ganhou
   // 0 == perdeu
   resultado = playGame(campo, gameInfo);
-  clearScreen();
-  showMatriz(gameInfo, campo);
+
   //printf("Dia: %d Mes: %d Ano: %d Hora: %d Min: %d Seg: %d\n", tempoInicial->dia, tempoInicial->mes, tempoInicial->ano, tempoInicial->hora, tempoInicial->min, tempoInicial->seg);
-  printf("%d\n", resultado);
+
   return 0;
 }
 
@@ -142,7 +142,9 @@ bool playGame(Matriz **campo, GameInfo *gameInfo)
       putFlag(campo, gameInfo, linha, coluna);
     }
   }
-  // 0 == perdeu
+  openAll(gameInfo, campo);
+  clearScreen();
+  showMatriz(gameInfo, campo);
   return false;
 }
 
@@ -232,6 +234,17 @@ void locateBombs(GameInfo *gameInfo, Matriz **campo)
       }
       else
         campo[linha][coluna].bombasProximas = -1;
+    }
+  }
+}
+
+void openAll(GameInfo *gameInfo, Matriz **campo)
+{
+  for (size_t i = 0; i < gameInfo->linhas; i++)
+  {
+    for (size_t j = 0; j < gameInfo->colunas; j++)
+    {
+      campo[i][j].aberto = true;
     }
   }
 }
