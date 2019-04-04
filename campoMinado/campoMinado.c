@@ -1,16 +1,8 @@
-//Implemente o jogo Campo Minado. Veja uma poss´ıvel descri¸c˜ao do jogo em
-//http://pt.wikipedia.org/wiki/Campo_minado. Observa¸c˜oes:
-//• Deve ser usada aloca¸c˜ao dinˆamica para a(s) matriz(es).
-//• O programa deve ser organizado em diferentes arquivos e fun¸c˜oes, se necess´ario.
-//• O usu´ario escolhe a dimens˜ao da matriz e o n´umero de bombas.
-//• Deve ser contado o tempo decorrido desde o in´ıcio do jogo.
-//• Deve haver uma op¸c˜ao na qual o computador tenta resolver o jogo (de
-//maneira inteligente, n˜ao simplesmente aleat´oria).
-
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 typedef struct matriz
 {
@@ -46,6 +38,7 @@ void openAround(Matriz **campo, int linha, int coluna, GameInfo *gameInfo);
 void header();
 void winScreeen();
 void loseScreen();
+bool autoPlay(Matriz **campo, GameInfo *gameInfo);
 
 int main()
 {
@@ -53,7 +46,7 @@ int main()
   Matriz **campo;
   time_t start_t, end_t;
   double duracao;
-  int resultado;
+  int resultado, opc;
 
   srand(time(0));
 
@@ -78,12 +71,26 @@ int main()
   //Verifica se deu certo
   if (campo == NULL)
     return 0;
+
   putBombs(campo, gameInfo);
   locateBombs(gameInfo, campo);
+
+  do
+  {
+    clearScreen();
+    printf(" Quem vai jogar?\n 1- Voce\n 2- Computador\n\n Opcao: ");
+    scanf("%d", &opc);
+  } while (opc < 0 || opc > 2);
+
   //Salva o tempo inicial
   time(&start_t);
+
   //loop principal do game
-  resultado = playGame(campo, gameInfo);
+  if (opc == 1)
+    resultado = playGame(campo, gameInfo);
+  else
+    resultado = autoPlay(campo, gameInfo);
+
   if (resultado)
     winScreeen();
   else
@@ -144,6 +151,44 @@ bool playGame(Matriz **campo, GameInfo *gameInfo)
   return false;
 }
 
+bool autoPlay(Matriz **campo, GameInfo *gameInfo)
+{
+  int resultado, linha, coluna, opc;
+
+  while (!gameInfo->perdeu)
+  {
+    clearScreen();
+    showMatriz(gameInfo, campo);
+    sleep(1);
+    linha = getRandomNumber(gameInfo->linhas);
+    coluna = getRandomNumber(gameInfo->colunas);
+    if (campo[linha][coluna].bomba)
+    {
+      gameInfo->perdeu = true;
+      campo[linha][coluna].aberto = true;
+    }
+    else
+    {
+      if (campo[linha][coluna].flag == false)
+      {
+        campo[linha][coluna].aberto = true;
+        if (campo[linha][coluna].bombasProximas == 0)
+          openAround(campo, linha, coluna, gameInfo);
+        if (verifyVictory(campo, gameInfo))
+        {
+          clearScreen();
+          showMatriz(gameInfo, campo);
+          return true;
+        }
+      }
+    }
+  }
+  openAll(gameInfo, campo);
+  clearScreen();
+  showMatriz(gameInfo, campo);
+  return false;
+}
+
 void header()
 {
   printf("\n CAMPO MINADO - YURI BECKER\n\n\n");
@@ -151,12 +196,12 @@ void header()
 
 void winScreeen()
 {
-  printf("\n VOCE GANHOU!!\n\n");
+  printf("\n :) GANHOU!!\n\n");
 }
 
 void loseScreen()
 {
-  printf("\n VOCE PERDEU!!\n\n");
+  printf("\n :( PERDEU!!\n\n");
 }
 
 void openAround(Matriz **campo, int linha, int coluna, GameInfo *gameInfo)
