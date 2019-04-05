@@ -39,6 +39,9 @@ void header();
 void winScreeen();
 void loseScreen();
 bool autoPlay(Matriz **campo, GameInfo *gameInfo);
+bool tryPlay(Matriz **campo, GameInfo *gameInfo);
+bool findBombs(Matriz **campo, GameInfo *gameInfo, int linha, int coluna);
+bool findSafeSquares(Matriz **campo, GameInfo *gameInfo, int linha, int coluna);
 
 int main()
 {
@@ -122,7 +125,6 @@ bool playGame(Matriz **campo, GameInfo *gameInfo)
       if (campo[linha][coluna].bomba)
       {
         gameInfo->perdeu = true;
-        campo[linha][coluna].aberto = true;
       }
       else
       {
@@ -157,266 +159,425 @@ bool autoPlay(Matriz **campo, GameInfo *gameInfo)
 
   while (!gameInfo->perdeu)
   {
-    clearScreen();
+    // clearScreen();
     showMatriz(gameInfo, campo);
     sleep(1);
-    linha = getRandomNumber(gameInfo->linhas);
-    coluna = getRandomNumber(gameInfo->colunas);
-    if (campo[linha][coluna].bomba)
+    if (!tryPlay(campo, gameInfo))
     {
-      gameInfo->perdeu = true;
-      campo[linha][coluna].aberto = true;
-    }
-    else
-    {
-      if (campo[linha][coluna].flag == false)
+      //printf("AQUI2");
+      linha = getRandomNumber(gameInfo->linhas);
+      coluna = getRandomNumber(gameInfo->colunas);
+      if (campo[linha][coluna].bomba)
       {
-        campo[linha][coluna].aberto = true;
-        if (campo[linha][coluna].bombasProximas == 0)
-          openAround(campo, linha, coluna, gameInfo);
-        if (verifyVictory(campo, gameInfo))
+        gameInfo->perdeu = true;
+      }
+      else
+      {
+        if (campo[linha][coluna].flag == false)
         {
-          clearScreen();
-          showMatriz(gameInfo, campo);
-          return true;
+          campo[linha][coluna].aberto = true;
+          if (campo[linha][coluna].bombasProximas == 0)
+            openAround(campo, linha, coluna, gameInfo);
+          if (verifyVictory(campo, gameInfo))
+          {
+            clearScreen();
+            showMatriz(gameInfo, campo);
+            return true;
+          }
         }
       }
     }
   }
   openAll(gameInfo, campo);
-  clearScreen();
+  //clearScreen();
   showMatriz(gameInfo, campo);
   return false;
 }
 
-void header()
+bool tryPlay(Matriz **campo, GameInfo *gameInfo)
 {
-  printf("\n CAMPO MINADO - YURI BECKER\n\n\n");
-}
-
-void winScreeen()
-{
-  printf("\n :) GANHOU!!\n\n");
-}
-
-void loseScreen()
-{
-  printf("\n :( PERDEU!!\n\n");
-}
-
-void openAround(Matriz **campo, int linha, int coluna, GameInfo *gameInfo)
-{
-  if (linha < 0 || coluna < 0 || coluna >= gameInfo->colunas || linha >= gameInfo->linhas)
-    return;
-  if (campo[linha][coluna].bomba == true || campo[linha][coluna].checked == true || campo[linha][coluna].flag)
-    return;
-  campo[linha][coluna].aberto = campo[linha][coluna].checked = true;
-  campo[linha][coluna].flag = false;
-  if (campo[linha][coluna].bombasProximas == 0)
+  bool worked = false;
+  for (size_t i = 0; i < gameInfo->linhas; i++)
   {
-    openAround(campo, linha + 1, coluna, gameInfo);
-    openAround(campo, linha, coluna + 1, gameInfo);
-    openAround(campo, linha - 1, coluna, gameInfo);
-    openAround(campo, linha, coluna - 1, gameInfo);
-    openAround(campo, linha + 1, coluna - 1, gameInfo);
-    openAround(campo, linha - 1, coluna + 1, gameInfo);
-    openAround(campo, linha + 1, coluna + 1, gameInfo);
-    openAround(campo, linha - 1, coluna - 1, gameInfo);
-  }
-}
-
-void putFlag(Matriz **campo, GameInfo *gameInfo, int linha, int coluna)
-{
-  if (linha >= 0 && linha < gameInfo->linhas && coluna >= 0 && coluna < gameInfo->colunas)
-    if (campo[linha][coluna].aberto == false)
-      if (campo[linha][coluna].flag == true)
-        campo[linha][coluna].flag = false;
-      else
-        campo[linha][coluna].flag = true;
-}
-
-bool verifyVictory(Matriz **campo, GameInfo *gameInfo)
-{
-  int count = 0;
-  int total = gameInfo->linhas * gameInfo->colunas - gameInfo->numBombas;
-  for (size_t l = 0; l < gameInfo->linhas; l++)
-  {
-    for (size_t c = 0; c < gameInfo->colunas; c++)
+    for (size_t j = 0; j < gameInfo->colunas; j++)
     {
-      if (campo[l][c].aberto)
+      //Procura ao redor se numBombasProximas == quadrados nao abertos
+      //Coloca flags nesses quadrados
+      // Procura quadrados com 100% de chance de n serem bombas e abre
+      if (campo[i][j].aberto && campo[i][j].bombasProximas > 0)
       {
-        count++;
+        if (findBombs(campo, gameInfo, i, j))
+        {
+          worked = true;
+        }
       }
     }
   }
-  if (count == total)
-    return true;
-  else
-    return false;
+  return worked;
 }
 
-void locateBombs(GameInfo *gameInfo, Matriz **campo)
+bool findBombs(Matriz **campo, GameInfo *gameInfo, int linha, int coluna)
 {
-  for (size_t linha = 0; linha < gameInfo->linhas; linha++)
+  bool worked = false;
+  int total = 0;
+  if (linha > 0 && !campo[linha - 1][coluna].aberto)
+    total++;
+  if (linha < gameInfo->linhas - 1 && !campo[linha + 1][coluna].aberto)
+    total++;
+  if (coluna > 0 && !campo[linha][coluna - 1].aberto)
+    total++;
+  if (coluna < gameInfo->colunas - 1 && !campo[linha][coluna + 1].aberto)
+    total++;
+  if (coluna > 0 && linha > 0 && !campo[linha - 1][coluna - 1].aberto)
+    total++;
+  if (linha > 0 && coluna < gameInfo->colunas - 1 && !campo[linha - 1][coluna + 1].aberto)
+    total++;
+  if (coluna > 0 && linha < gameInfo->linhas - 1 && !campo[linha + 1][coluna - 1].aberto)
+    total++;
+  if (linha < gameInfo->linhas - 1 && coluna < gameInfo->colunas - 1 && !campo[linha + 1][coluna + 1].aberto)
+    total++;
+  if (campo[linha][coluna].bombasProximas != 0 && campo[linha][coluna].bombasProximas == total)
   {
-    for (size_t coluna = 0; coluna < gameInfo->colunas; coluna++)
+
+    if (linha > 0 && !campo[linha - 1][coluna].aberto && !campo[linha - 1][coluna].flag)
     {
+      campo[linha - 1][coluna].flag = true;
+      worked = true;
+    }
+    if (linha < gameInfo->linhas - 1 && !campo[linha + 1][coluna].aberto && !campo[linha + 1][coluna].flag)
+    {
+      campo[linha + 1][coluna].flag = true;
+      worked = true;
+    }
+    if (coluna > 0 && !campo[linha][coluna - 1].aberto && !campo[linha][coluna - 1].flag)
+    {
+      campo[linha][coluna - 1].flag = true;
+      worked = true;
+    }
+    if (coluna < gameInfo->colunas - 1 && !campo[linha][coluna + 1].aberto && !campo[linha][coluna + 1].flag)
+    {
+      campo[linha][coluna + 1].flag = true;
+      worked = true;
+    }
+    if (coluna > 0 && linha > 0 && !campo[linha - 1][coluna - 1].aberto && !campo[linha - 1][coluna - 1].flag)
+    {
+      campo[linha - 1][coluna - 1].flag = true;
+      worked = true;
+    }
+    if (linha > 0 && coluna < gameInfo->colunas - 1 && !campo[linha - 1][coluna + 1].aberto && !campo[linha - 1][coluna + 1].flag)
+    {
+      campo[linha - 1][coluna + 1].flag = true;
+      worked = true;
+    }
+    if (coluna > 0 && linha < gameInfo->linhas - 1 && !campo[linha + 1][coluna - 1].aberto && !campo[linha + 1][coluna - 1].flag)
+    {
+      campo[linha + 1][coluna - 1].flag = true;
+      worked = true;
+    }
+    if (linha < gameInfo->linhas - 1 && coluna < gameInfo->colunas - 1 && !campo[linha + 1][coluna + 1].aberto && !campo[linha + 1][coluna + 1].flag)
+    {
+      campo[linha + 1][coluna + 1].flag = true;
+      worked = true;
+    }
+    //sleep(1);
+  }
+  return worked;
+}
+
+bool findSafeSquares(Matriz **campo, GameInfo *gameInfo, int linha, int coluna)
+{
+  bool worked = false;
+  int total = 0;
+  if (linha > 0 && !campo[linha - 1][coluna].aberto)
+    total++;
+  if (linha < gameInfo->linhas - 1 && !campo[linha + 1][coluna].aberto)
+    total++;
+  if (coluna > 0 && !campo[linha][coluna - 1].aberto)
+    total++;
+  if (coluna < gameInfo->colunas - 1 && !campo[linha][coluna + 1].aberto)
+    total++;
+  if (coluna > 0 && linha > 0 && !campo[linha - 1][coluna - 1].aberto)
+    total++;
+  if (linha > 0 && coluna < gameInfo->colunas - 1 && !campo[linha - 1][coluna + 1].aberto)
+    total++;
+  if (coluna > 0 && linha < gameInfo->linhas - 1 && !campo[linha + 1][coluna - 1].aberto)
+    total++;
+  if (linha < gameInfo->linhas - 1 && coluna < gameInfo->colunas - 1 && !campo[linha + 1][coluna + 1].aberto)
+    total++;
+  if (campo[linha][coluna].bombasProximas != 0 && campo[linha][coluna].bombasProximas == total)
+  {
+
+    if (linha > 0 && !campo[linha - 1][coluna].aberto && !campo[linha - 1][coluna].flag)
+    {
+      campo[linha - 1][coluna].flag = true;
+      worked = true;
+    }
+    if (linha < gameInfo->linhas - 1 && !campo[linha + 1][coluna].aberto && !campo[linha + 1][coluna].flag)
+    {
+      campo[linha + 1][coluna].flag = true;
+      worked = true;
+    }
+    if (coluna > 0 && !campo[linha][coluna - 1].aberto && !campo[linha][coluna - 1].flag)
+    {
+      campo[linha][coluna - 1].flag = true;
+      worked = true;
+    }
+    if (coluna < gameInfo->colunas - 1 && !campo[linha][coluna + 1].aberto && !campo[linha][coluna + 1].flag)
+    {
+      campo[linha][coluna + 1].flag = true;
+      worked = true;
+    }
+    if (coluna > 0 && linha > 0 && !campo[linha - 1][coluna - 1].aberto && !campo[linha - 1][coluna - 1].flag)
+    {
+      campo[linha - 1][coluna - 1].flag = true;
+      worked = true;
+    }
+    if (linha > 0 && coluna < gameInfo->colunas - 1 && !campo[linha - 1][coluna + 1].aberto && !campo[linha - 1][coluna + 1].flag)
+    {
+      campo[linha - 1][coluna + 1].flag = true;
+      worked = true;
+    }
+    if (coluna > 0 && linha < gameInfo->linhas - 1 && !campo[linha + 1][coluna - 1].aberto && !campo[linha + 1][coluna - 1].flag)
+    {
+      campo[linha + 1][coluna - 1].flag = true;
+      worked = true;
+    }
+    if (linha < gameInfo->linhas - 1 && coluna < gameInfo->colunas - 1 && !campo[linha + 1][coluna + 1].aberto && !campo[linha + 1][coluna + 1].flag)
+    {
+      campo[linha + 1][coluna + 1].flag = true;
+      worked = true;
+    }
+  }
+
+  void header()
+  {
+    printf("\n CAMPO MINADO - YURI BECKER\n\n\n");
+  }
+
+  void winScreeen()
+  {
+    printf("\n :) GANHOU!!\n\n");
+  }
+
+  void loseScreen()
+  {
+    printf("\n :( PERDEU!!\n\n");
+  }
+
+  void openAround(Matriz * *campo, int linha, int coluna, GameInfo *gameInfo)
+  {
+    if (linha < 0 || coluna < 0 || coluna >= gameInfo->colunas || linha >= gameInfo->linhas)
+      return;
+    if (campo[linha][coluna].bomba == true || campo[linha][coluna].checked == true || campo[linha][coluna].flag)
+      return;
+    campo[linha][coluna].aberto = campo[linha][coluna].checked = true;
+    campo[linha][coluna].flag = false;
+    if (campo[linha][coluna].bombasProximas == 0)
+    {
+      openAround(campo, linha + 1, coluna, gameInfo);
+      openAround(campo, linha, coluna + 1, gameInfo);
+      openAround(campo, linha - 1, coluna, gameInfo);
+      openAround(campo, linha, coluna - 1, gameInfo);
+      openAround(campo, linha + 1, coluna - 1, gameInfo);
+      openAround(campo, linha - 1, coluna + 1, gameInfo);
+      openAround(campo, linha + 1, coluna + 1, gameInfo);
+      openAround(campo, linha - 1, coluna - 1, gameInfo);
+    }
+  }
+
+  void putFlag(Matriz * *campo, GameInfo * gameInfo, int linha, int coluna)
+  {
+    if (linha >= 0 && linha < gameInfo->linhas && coluna >= 0 && coluna < gameInfo->colunas)
+      if (campo[linha][coluna].aberto == false)
+        if (campo[linha][coluna].flag == true)
+          campo[linha][coluna].flag = false;
+        else
+          campo[linha][coluna].flag = true;
+  }
+
+  bool verifyVictory(Matriz * *campo, GameInfo * gameInfo)
+  {
+    int count = 0;
+    int total = gameInfo->linhas * gameInfo->colunas - gameInfo->numBombas;
+    for (size_t l = 0; l < gameInfo->linhas; l++)
+    {
+      for (size_t c = 0; c < gameInfo->colunas; c++)
+      {
+        if (campo[l][c].aberto)
+        {
+          count++;
+        }
+      }
+    }
+    if (count == total)
+      return true;
+    else
+      return false;
+  }
+
+  void locateBombs(GameInfo * gameInfo, Matriz * *campo)
+  {
+    for (size_t linha = 0; linha < gameInfo->linhas; linha++)
+    {
+      for (size_t coluna = 0; coluna < gameInfo->colunas; coluna++)
+      {
+        if (!campo[linha][coluna].bomba)
+        {
+          int total = 0;
+          if (linha > 0 && campo[linha - 1][coluna].bomba)
+            total++;
+          if (linha < gameInfo->linhas - 1 && campo[linha + 1][coluna].bomba)
+            total++;
+          if (coluna > 0 && campo[linha][coluna - 1].bomba)
+            total++;
+          if (coluna < gameInfo->colunas - 1 && campo[linha][coluna + 1].bomba)
+            total++;
+          if (coluna > 0 && linha > 0 && campo[linha - 1][coluna - 1].bomba)
+            total++;
+          if (linha > 0 && coluna < gameInfo->colunas - 1 && campo[linha - 1][coluna + 1].bomba)
+            total++;
+          if (coluna > 0 && linha < gameInfo->linhas - 1 && campo[linha + 1][coluna - 1].bomba)
+            total++;
+          if (linha < gameInfo->linhas - 1 && coluna < gameInfo->colunas - 1 && campo[linha + 1][coluna + 1].bomba)
+            total++;
+          campo[linha][coluna].bombasProximas = total;
+        }
+        else
+          campo[linha][coluna].bombasProximas = -1;
+      }
+    }
+  }
+
+  void openAll(GameInfo * gameInfo, Matriz * *campo)
+  {
+    for (size_t i = 0; i < gameInfo->linhas; i++)
+    {
+      for (size_t j = 0; j < gameInfo->colunas; j++)
+      {
+        campo[i][j].aberto = true;
+      }
+    }
+  }
+
+  void initializeMatriz(GameInfo * gameInfo, Matriz * *campo)
+  {
+    for (size_t i = 0; i < gameInfo->linhas; i++)
+    {
+      for (size_t j = 0; j < gameInfo->colunas; j++)
+      {
+        campo[i][j].aberto = false;
+        campo[i][j].bomba = false;
+        campo[i][j].bombasProximas = 0;
+        campo[i][j].flag = false;
+        campo[i][j].checked = false;
+      }
+    }
+  }
+
+  void putBombs(Matriz * *campo, GameInfo * gameInfo)
+  {
+    int total = 0;
+    do
+    {
+      int linha = getRandomNumber(gameInfo->linhas);
+      int coluna = getRandomNumber(gameInfo->colunas);
       if (!campo[linha][coluna].bomba)
       {
-        int total = 0;
-        if (linha > 0 && campo[linha - 1][coluna].bomba)
-          total++;
-        if (linha < gameInfo->linhas - 1 && campo[linha + 1][coluna].bomba)
-          total++;
-        if (coluna > 0 && campo[linha][coluna - 1].bomba)
-          total++;
-        if (coluna < gameInfo->colunas - 1 && campo[linha][coluna + 1].bomba)
-          total++;
-        if (coluna > 0 && linha > 0 && campo[linha - 1][coluna - 1].bomba)
-          total++;
-        if (linha > 0 && coluna < gameInfo->colunas - 1 && campo[linha - 1][coluna + 1].bomba)
-          total++;
-        if (coluna > 0 && linha < gameInfo->linhas - 1 && campo[linha + 1][coluna - 1].bomba)
-          total++;
-        if (linha < gameInfo->linhas - 1 && coluna < gameInfo->colunas - 1 && campo[linha + 1][coluna + 1].bomba)
-          total++;
-        campo[linha][coluna].bombasProximas = total;
+        campo[linha][coluna].bomba = true;
+        total++;
       }
-      else
-        campo[linha][coluna].bombasProximas = -1;
-    }
+    } while (total < gameInfo->numBombas);
   }
-}
 
-void openAll(GameInfo *gameInfo, Matriz **campo)
-{
-  for (size_t i = 0; i < gameInfo->linhas; i++)
+  void clearScreen()
   {
-    for (size_t j = 0; j < gameInfo->colunas; j++)
+    system("@cls||clear");
+  }
+
+  int getInt(int min, int max, char str[])
+  {
+    int aux = 0;
+    bool errou = false;
+    while (aux > max || aux < min)
     {
-      campo[i][j].aberto = true;
+      if (errou)
+        printf("%s", str);
+      scanf("%d", &aux);
+      errou = true;
     }
+    return aux;
   }
-}
 
-void initializeMatriz(GameInfo *gameInfo, Matriz **campo)
-{
-  for (size_t i = 0; i < gameInfo->linhas; i++)
+  void showMatriz(GameInfo * gameInfo, Matriz * *campo)
   {
-    for (size_t j = 0; j < gameInfo->colunas; j++)
-    {
-      campo[i][j].aberto = false;
-      campo[i][j].bomba = false;
-      campo[i][j].bombasProximas = 0;
-      campo[i][j].flag = false;
-      campo[i][j].checked = false;
-    }
-  }
-}
-
-void putBombs(Matriz **campo, GameInfo *gameInfo)
-{
-  int total = 0;
-  do
-  {
-    int linha = getRandomNumber(gameInfo->linhas);
-    int coluna = getRandomNumber(gameInfo->colunas);
-    if (!campo[linha][coluna].bomba)
-    {
-      campo[linha][coluna].bomba = true;
-      total++;
-    }
-  } while (total < gameInfo->numBombas);
-}
-
-void clearScreen()
-{
-  system("@cls||clear");
-}
-
-int getInt(int min, int max, char str[])
-{
-  int aux = 0;
-  bool errou = false;
-  while (aux > max || aux < min)
-  {
-    if (errou)
-      printf("%s", str);
-    scanf("%d", &aux);
-    errou = true;
-  }
-  return aux;
-}
-
-void showMatriz(GameInfo *gameInfo, Matriz **campo)
-{
-  header();
-  printf("     ");
-  for (int j = 0; j < gameInfo->colunas; j++)
-  {
-    printf(" %d  ", j);
-  }
-  printf("\n    ");
-  for (int j = 0; j < gameInfo->colunas; j++)
-  {
-    printf("____");
-  }
-  printf("__");
-  printf("\n\n");
-  for (int i = 0; i < gameInfo->linhas; i++)
-  {
-    if (i < 10)
-      printf(" %d | ", i);
-    else
-      printf(" %d| ", i);
-
+    header();
+    printf("     ");
     for (int j = 0; j < gameInfo->colunas; j++)
     {
-      if (campo[i][j].flag)
-        printf(" P  ");
-      else if (campo[i][j].aberto)
-        if (campo[i][j].bomba)
-          printf(" B  ");
-        else if (campo[i][j].bombasProximas > 0)
-          printf(" %d  ", campo[i][j].bombasProximas);
-        else
-          printf("    ");
-      else
-        printf(" -  ");
+      printf(" %d  ", j);
     }
-    printf(" |");
-    printf("\n");
+    printf("\n    ");
+    for (int j = 0; j < gameInfo->colunas; j++)
+    {
+      printf("____");
+    }
+    printf("__");
+    printf("\n\n");
+    for (int i = 0; i < gameInfo->linhas; i++)
+    {
+      if (i < 10)
+        printf(" %d | ", i);
+      else
+        printf(" %d| ", i);
+
+      for (int j = 0; j < gameInfo->colunas; j++)
+      {
+        if (campo[i][j].flag)
+          printf(" P  ");
+        else if (campo[i][j].aberto)
+          if (campo[i][j].bomba)
+            printf(" B  ");
+          else if (campo[i][j].bombasProximas > 0)
+            printf(" %d  ", campo[i][j].bombasProximas);
+          else
+            printf("    ");
+        else
+          printf(" -  ");
+      }
+      printf(" |");
+      printf("\n");
+    }
+    printf("    ");
+    for (int j = 0; j < gameInfo->colunas; j++)
+    {
+      printf("____");
+    }
+    printf("__\n\n");
   }
-  printf("    ");
-  for (int j = 0; j < gameInfo->colunas; j++)
+
+  Matriz **alocarMatriz(GameInfo * gameInfo)
   {
-    printf("____");
-  }
-  printf("__\n\n");
-}
 
-Matriz **alocarMatriz(GameInfo *gameInfo)
-{
+    Matriz **m = (Matriz **)malloc(gameInfo->linhas * sizeof(Matriz *));
 
-  Matriz **m = (Matriz **)malloc(gameInfo->linhas * sizeof(Matriz *));
+    for (int i = 0; i < gameInfo->linhas; i++)
+    {
+      m[i] = (Matriz *)malloc(gameInfo->colunas * sizeof(Matriz));
+    }
 
-  for (int i = 0; i < gameInfo->linhas; i++)
-  {
-    m[i] = (Matriz *)malloc(gameInfo->colunas * sizeof(Matriz));
-  }
+    if (m == NULL)
+    {
+      printf("Memoria insuficiente.\n");
+      return m;
+    }
 
-  if (m == NULL)
-  {
-    printf("Memoria insuficiente.\n");
+    initializeMatriz(gameInfo, m);
+
     return m;
   }
 
-  initializeMatriz(gameInfo, m);
-
-  return m;
-}
-
-int getRandomNumber(int max)
-{
-  return rand() % max;
-}
+  int getRandomNumber(int max)
+  {
+    int retorno = rand() % max;
+    return retorno;
+  }
