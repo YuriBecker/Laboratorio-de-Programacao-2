@@ -1,11 +1,9 @@
 #ifndef UTILS
 #define UTILS
 
-#include <time.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
-#include <unistd.h>
+#include <stdlib.h>
 
 int getRandomNumber(int max);
 int getInt(int min, int max, char str[]);

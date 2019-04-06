@@ -1,11 +1,13 @@
 #ifndef HANDLE_MATRIZ
 #define HANDLE_MATRIZ
 
-#include "structs.h"
 #include <stdio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "structs.h"
+#include "handleScreen.h"
+#include "utils.h"
 
 Matriz **alocarMatriz(GameInfo *gameInfo);
 void putBombs(Matriz **campo, GameInfo *gameInfo);

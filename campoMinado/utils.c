@@ -1,7 +1,5 @@
-// #include <stdio.h>
-// #include <stdlib.h>
-#include <stdbool.h>
-// #include <unistd.h>
+#include "utils.h"
+
 int getInt(int min, int max, char str[])
 {
   int aux = 0;
