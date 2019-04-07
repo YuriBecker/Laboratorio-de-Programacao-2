@@ -31,7 +31,7 @@ bool autoPlay(Matriz **campo, GameInfo *gameInfo)
               return true;
             }
             printf("\nJogada linha: %d, coluna: %d\n", linha, coluna);
-            sleep(1);
+            sleep(2);
           }
         }
       }
@@ -56,14 +56,11 @@ bool tryPlay(Matriz **campo, GameInfo *gameInfo)
     {
       if (campo[i][j].aberto && campo[i][j].bombasProximas > 0)
       {
-        if (findBombs(campo, gameInfo, i, j))
+        if (findBombs(campo, gameInfo, i, j) || findSafeSquares(campo, gameInfo, i, j))
         {
+          worked = true;
           clearScreen();
           showMatriz(gameInfo, campo);
-          if (findSafeSquares(campo, gameInfo, i, j))
-          {
-            worked = true;
-          }
         }
       }
     }
@@ -140,6 +137,11 @@ bool findBombs(Matriz **campo, GameInfo *gameInfo, int linha, int coluna)
       campo[linha + 1][coluna + 1].flag = true;
       worked = true;
     }
+    if (worked)
+    {
+      printf("\nColocando bandeiras .... \n");
+      sleep(1);
+    }
   }
   return worked;
 }
@@ -213,6 +215,11 @@ bool findSafeSquares(Matriz **campo, GameInfo *gameInfo, int linha, int coluna)
       campo[linha + 1][coluna + 1].aberto = true;
       openAround(campo, linha + 1, coluna + 1, gameInfo);
       worked = true;
+    }
+    if (worked)
+    {
+      printf("\nAbrindo quadrados totalmente seguros .... \n");
+      sleep(2);
     }
   }
   return worked;

@@ -20,7 +20,7 @@ void loseScreen()
 
 void clearScreen()
 {
-  system("@cls||clear");
+  system("clear");
 }
 
 void showMatriz(GameInfo *gameInfo, Matriz **campo)
