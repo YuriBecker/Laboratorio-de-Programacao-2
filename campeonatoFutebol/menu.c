@@ -94,7 +94,20 @@ void menuJogadores(Lista *jogadores, Lista *times)
       aguardarTecla();
       break;
     case 4:
-
+      limpaTela();
+      printf("\n\nDigite o ID do jogador a ser buscado: ");
+      scanf("%d", &id);
+      if (buscarJogador(jogadores, id) != NULL)
+      {
+        printf("\nJogador encontrado!\n\n");
+        Lista *aux = criar();
+        aux = inserirFim(aux, buscarJogador(jogadores, id));
+        imprimirJogador(aux->info);
+        free(aux);
+      }
+      else
+        printf("\n\nJogador nao encontrado!\n\n");
+      aguardarTecla();
       break;
     case 5:
 
