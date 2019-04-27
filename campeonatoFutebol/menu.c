@@ -102,7 +102,7 @@ void menuJogadores(Lista *jogadores, Lista *times)
         printf("\nJogador encontrado!\n\n");
         Lista *aux = criar();
         aux = inserirFim(aux, buscarJogador(jogadores, id));
-        imprimirJogador(aux->info);
+        imprimirJogadores(aux);
         free(aux);
       }
       else
