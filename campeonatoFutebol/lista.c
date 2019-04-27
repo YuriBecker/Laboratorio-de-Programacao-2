@@ -43,7 +43,7 @@ void imprimir(Lista *lista, void imprimirElemento(void *))
       Lista *temp = lista;
       while (!vazia(temp))
       {
-         imprimirElemento(temp->info); 
+         imprimirElemento(temp->info);
          temp = temp->prox;
       }
    }
@@ -54,7 +54,7 @@ void *buscar(Lista *lista, void *elemento, bool iguais(void *, void *))
    Lista *temp = lista;
    while (temp != NULL)
    {
-      if (iguais(temp->info, elemento)) 
+      if (iguais(temp->info, elemento))
       {
          free(elemento);
          return temp->info;
