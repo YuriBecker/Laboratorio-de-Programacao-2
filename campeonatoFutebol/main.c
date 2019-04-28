@@ -24,23 +24,18 @@
 
 int main(int argc, char *argv[])
 {
-  bool *sair;
-  sair = (bool *)malloc(sizeof(bool));
-  *sair = false;
+  bool sair;
+  sair = false;
   Lista *times = criar();
   Lista *jogadores = criar();
 
-  while (!*sair)
+  while (!sair)
   {
-    menuPrincipal(times, jogadores, sair);
+    menuPrincipal(&times, &jogadores, &sair);
   }
 
   // printf("----- Lista de Times (sem Jogadores) -----\n");
-  // times = inserirFim(times, criarTime("Gremio"));
-  // times = inserirFim(times, criarTime("Inter"));
-  // times = inserirFim(times, criarTime("Flamengo"));
-  // times = inserirFim(times, criarTime("Sao Paulo"));
-  // times = inserirFim(times, criarTime("Sport"));
+
   // imprimirTimes(times);
 
   // printf("\n----- Adicao de jogadores -----\n");
@@ -88,7 +83,6 @@ int main(int argc, char *argv[])
 
   // // Retira o time 4 da lista geral de times.
   // times = retirarTime(times, 4);
-
 
   // // Desinscreve o jogador 3 do time 1.
   // t = buscarTime(times, 1);
