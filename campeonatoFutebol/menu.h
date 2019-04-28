@@ -12,13 +12,14 @@
 #include "jogador.h"
 
 void limpaTela();
-void menuPrincipal(Lista *times, Lista *jogadores, bool *sair);
+void menuPrincipal(Lista **times, Lista **jogadores, bool *sair);
 void textoMenuPrincipal();
-void menuJogadores(Lista *jogadores, Lista *times);
+Lista *menuJogadores(Lista *jogadores, Lista *times);
 void textoMenuJogadores();
-void menuTimes(Lista *times);
+Lista *menuTimes(Lista *jogadores, Lista *times);
 void textoMenuTimes();
 void aguardarTecla();
 
 Lista *criaJogadoresAutomaticamente(Lista *jogadores);
+Lista *criaTimesAutomaticamente(Lista *times);
 #endif
