@@ -10,7 +10,7 @@ unsigned int gerarIdJogador()
 // Mostra na tela os dados de um jogador.
 void imprimirJogador(void *jogador)
 {
-  printf("ID: %d - Nome: %s\n", ((Jogador *)jogador)->id, ((Jogador *)jogador)->nome);
+  printf("   ID jogador: %d - Nome: %s\n", ((Jogador *)jogador)->id, ((Jogador *)jogador)->nome);
 }
 
 // Compara a igualdade entre jogadores.
@@ -25,6 +25,7 @@ Jogador *criarJogadorPK()
   Jogador *j = (Jogador *)malloc(sizeof(Jogador));
   j->nome = (char *)malloc(sizeof(char) * 50);
   j->id = gerarIdJogador();
+  j->idTime = -1;
   return j;
 }
 

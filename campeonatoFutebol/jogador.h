@@ -17,6 +17,7 @@ typedef struct Jogador
   int posicao;
   int idade;
   int numCamisa;
+  int idTime;
 } Jogador;
 
 Jogador *criarJogador(const char *nome);
