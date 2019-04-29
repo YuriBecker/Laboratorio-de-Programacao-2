@@ -10,7 +10,14 @@ unsigned int gerarIdJogador()
 // Mostra na tela os dados de um jogador.
 void imprimirJogador(void *jogador)
 {
-  printf("   ID jogador: %d - Nome: %s\n", ((Jogador *)jogador)->id, ((Jogador *)jogador)->nome);
+  if (((Jogador *)jogador)->idTime > 0)
+  {
+    printf("   ID: %d - Nome: %s - ID Time: %d\n", ((Jogador *)jogador)->id, ((Jogador *)jogador)->nome, ((Jogador *)jogador)->idTime);
+  }
+  else
+  {
+    printf("   ID: %d - Nome: %s - Não possui time\n", ((Jogador *)jogador)->id, ((Jogador *)jogador)->nome);
+  }
 }
 
 // Compara a igualdade entre jogadores.
