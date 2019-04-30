@@ -33,6 +33,10 @@ Jogador *criarJogadorPK()
   j->nome = (char *)malloc(sizeof(char) * 50);
   j->id = gerarIdJogador();
   j->idTime = -1;
+  j->cartaoAmarelo = 0;
+  j->cartaoVermelho = 0;
+  j->faltas = 0;
+  j->gols = 0;
   return j;
 }
 

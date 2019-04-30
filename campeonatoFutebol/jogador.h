@@ -18,6 +18,10 @@ typedef struct Jogador
   int idade;
   int numCamisa;
   int idTime;
+  int gols;
+  int cartaoVermelho;
+  int cartaoAmarelo;
+  int faltas;
 } Jogador;
 
 Jogador *criarJogador(const char *nome);
