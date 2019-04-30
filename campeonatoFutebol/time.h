@@ -19,6 +19,8 @@ typedef struct Time
   char *dataFundacao;
   Lista *jogadores;
   int idTreinador;
+  int golsFeitos;
+  int golsSofridos;
 } Time;
 
 Time *criarTime(const char *nome);
