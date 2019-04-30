@@ -12,11 +12,11 @@ void imprimirJogador(void *jogador)
 {
   if (((Jogador *)jogador)->idTime > 0)
   {
-    printf("   ID: %d - Nome: %s - ID Time: %d\n", ((Jogador *)jogador)->id, ((Jogador *)jogador)->nome, ((Jogador *)jogador)->idTime);
+    printf("   ID: %d - Nome: %s - Idade: %d - ID Time: %d \n", ((Jogador *)jogador)->id, ((Jogador *)jogador)->nome, ((Jogador *)jogador)->idade, ((Jogador *)jogador)->idTime);
   }
   else
   {
-    printf("   ID: %d - Nome: %s - Não possui time\n", ((Jogador *)jogador)->id, ((Jogador *)jogador)->nome);
+    printf("   ID: %d - Nome: %s - Idade: %d - Não possui time\n", ((Jogador *)jogador)->id, ((Jogador *)jogador)->nome, ((Jogador *)jogador)->idade);
   }
 }
 
@@ -41,10 +41,13 @@ Jogador *criarJogadorPK()
 }
 
 // Cria um jogador com a id e o nome preenchidos
-Jogador *criarJogador(const char *nome)
+Jogador *criarJogador(const char *nome, int posicao, int idade, int numCamisa)
 {
   Jogador *j = criarJogadorPK();
   strcpy(j->nome, nome);
+  j->posicao = posicao;
+  j->idade = idade;
+  j->numCamisa = numCamisa;
   return j;
 }
 

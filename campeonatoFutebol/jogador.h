@@ -24,7 +24,7 @@ typedef struct Jogador
   int faltas;
 } Jogador;
 
-Jogador *criarJogador(const char *nome);
+Jogador *criarJogador(const char *nome, int posicao, int idade, int numCamisa);
 Jogador *buscarJogador(Lista *jogadores, int id);
 Lista *retirarJogador(Lista *jogadores, int id);
 Lista *retirarJogadorP(Lista *jogadores, Jogador *jogador);

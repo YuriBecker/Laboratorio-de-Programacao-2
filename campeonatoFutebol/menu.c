@@ -189,18 +189,20 @@ Lista *menuJogadores(Lista *jogadores, Lista *times)
 Lista *criaJogadoresAutomaticamente(Lista *jogadores)
 {
   limpaTela();
-  jogadores = inserirFim(jogadores, criarJogador("Pedro"));
-  jogadores = inserirFim(jogadores, criarJogador("Paulo"));
-  jogadores = inserirFim(jogadores, criarJogador("Mario"));
-  jogadores = inserirFim(jogadores, criarJogador("Miguel"));
-  jogadores = inserirFim(jogadores, criarJogador("Fernando"));
-  jogadores = inserirFim(jogadores, criarJogador("Ricardo"));
-  jogadores = inserirFim(jogadores, criarJogador("Eduardo"));
-  jogadores = inserirFim(jogadores, criarJogador("Ricardo"));
-  jogadores = inserirFim(jogadores, criarJogador("Jao"));
-  jogadores = inserirFim(jogadores, criarJogador("Carlos"));
-  jogadores = inserirFim(jogadores, criarJogador("Fabricio"));
-  jogadores = inserirFim(jogadores, criarJogador("Rogerio"));
+  jogadores = inserirFim(jogadores, criarJogador("Pedro", ATACANTE, 19, 2));
+  jogadores = inserirFim(jogadores, criarJogador("Paulo", GOLEIRO, 20, 1));
+  jogadores = inserirFim(jogadores, criarJogador("Mario", ZAGUEIRO, 25, 3));
+  jogadores = inserirFim(jogadores, criarJogador("Miguel", ATACANTE, 21, 4));
+  jogadores = inserirFim(jogadores, criarJogador("Fernando", ZAGUEIRO, 22, 5));
+  jogadores = inserirFim(jogadores, criarJogador("Ricardo", ATACANTE, 25, 6));
+  jogadores = inserirFim(jogadores, criarJogador("Eduardo", ZAGUEIRO, 25, 7));
+  jogadores = inserirFim(jogadores, criarJogador("Pedro", ATACANTE, 19, 2));
+  jogadores = inserirFim(jogadores, criarJogador("Marcos", GOLEIRO, 20, 1));
+  jogadores = inserirFim(jogadores, criarJogador("Daniel", ZAGUEIRO, 25, 3));
+  jogadores = inserirFim(jogadores, criarJogador("Lucas", ATACANTE, 21, 4));
+  jogadores = inserirFim(jogadores, criarJogador("Ricardo", ZAGUEIRO, 22, 5));
+  jogadores = inserirFim(jogadores, criarJogador("Ze", ATACANTE, 25, 6));
+  jogadores = inserirFim(jogadores, criarJogador("Marcelo", ZAGUEIRO, 25, 7));
   printf("\nJogadores adicionados com sucesso!\n");
   aguardarTecla();
   return jogadores;
