@@ -249,6 +249,7 @@ Lista *menuTimes(Lista *jogadores, Lista *times)
 {
   int opc;
   int id;
+  char nome[50], estadio[50], cidade[50], data[50];
   while (opc != 0)
   {
     textoMenuTimes();
@@ -256,7 +257,19 @@ Lista *menuTimes(Lista *jogadores, Lista *times)
     switch (opc)
     {
     case 1:
-
+      limpaTela();
+      printf("\n\nDigite o nome do time: ");
+      scanf(" %[^\n]s", nome);
+      printf("\n\nDigite o nome do estadio: ");
+      scanf(" %[^\n]s", estadio);
+      printf("\n\nDigite o nome da cidade de origem do time: ");
+      scanf(" %[^\n]s", cidade);
+      printf("\n\nDigite a data de fundacao do time: ");
+      scanf(" %[^\n]s", data);
+      times = inserirFim(times, criarTime(nome, estadio, cidade, data));
+      printf("\nTime criado com sucesso!\n");
+      aguardarTecla();
+      break;
       break;
     case 2:
       limpaTela();
