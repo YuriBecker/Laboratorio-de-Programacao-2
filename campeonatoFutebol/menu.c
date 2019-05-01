@@ -289,11 +289,10 @@ Lista *menuTimes(Lista *jogadores, Lista *times)
 
 Lista *criaTimesAutomaticamente(Lista *times)
 {
-  times = inserirFim(times, criarTime("Gremio"));
-  times = inserirFim(times, criarTime("Inter"));
-  times = inserirFim(times, criarTime("Flamengo"));
-  times = inserirFim(times, criarTime("Sao Paulo"));
-  times = inserirFim(times, criarTime("Sport"));
+  times = inserirFim(times, criarTime("Gremio", "Arena do Gremio", "Porto Alegre", "15 de setembro de 1903 "));
+  times = inserirFim(times, criarTime("Inter", "Beira Rio", "Porto Alegre", "4 de abril de 1909 "));
+  times = inserirFim(times, criarTime("Flamengo", "Estádio da Gavea", "Rio de Janeiro", "17 de novembro de 1895"));
+  times = inserirFim(times, criarTime("Sao Paulo", "Estádio do Morumbi", "Sao Paulo", "25 de janeiro de 1930"));
   limpaTela();
   printf("\nTimes criados com sucesso!\n");
   aguardarTecla();
