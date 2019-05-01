@@ -69,6 +69,10 @@ Lista *menuJogadores(Lista *jogadores, Lista *times)
 {
   int opc = 1;
   int id;
+  char nome[50];
+  int posicao;
+  int idade;
+  int numCamisa;
   while (opc != 0)
   {
     textoMenuJogadores();
@@ -76,7 +80,27 @@ Lista *menuJogadores(Lista *jogadores, Lista *times)
     switch (opc)
     {
     case 1:
-
+      limpaTela();
+      printf("\n\nDigite o nome do jogador: ");
+      scanf(" %[^\n]s", nome);
+      do
+      {
+        printf("\n\nQual a posicao do jogador (0- Goleiro, 1- Atacante, 2- Zagueiro) : ");
+        scanf("%d", &posicao);
+      } while (posicao < 0 || posicao > 2);
+      do
+      {
+        printf("\n\nIdade do jogador: ");
+        scanf("%d", &idade);
+      } while (idade < 1);
+      do
+      {
+        printf("\n\nNumero da camisa: ");
+        scanf("%d", &numCamisa);
+      } while (numCamisa < 1 || numCamisa > 99);
+      jogadores = inserirFim(jogadores, criarJogador(nome, posicao, idade, numCamisa));
+      printf("\nJogador adicionado com sucesso!\n");
+      aguardarTecla();
       break;
     case 2:
       limpaTela();
@@ -326,8 +350,8 @@ Lista *menuTreinadores(Lista *treinadores, Lista *times)
     case 1:
       limpaTela();
       char nome[50];
-      printf("\nDigite o nome do treinador: ");
-      scanf("%s", nome);
+      printf("\nDigite o nome do treinador (Max 50): ");
+      scanf(" %[^\n]s", nome);
       treinadores = inserirFim(treinadores, criarTreinador(nome));
       printf("\nTreinador criado com sucesso!\n");
       aguardarTecla();
