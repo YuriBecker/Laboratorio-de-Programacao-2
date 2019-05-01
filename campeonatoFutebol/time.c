@@ -14,7 +14,7 @@ void imprimirTime(void *time)
 {
   Time *t = (Time *)time;
   printf("--------------------------------\n");
-  printf("ID Time: %d - %s - Estadio: %s - Cidade: %s\n", t->id, t->nome, t->estadio, t->cidade);
+  printf(" ID Time: %d \n %s \n Estadio: %s \n Cidade: %s\n", t->id, t->nome, t->estadio, t->cidade);
   if (t->jogadores != NULL)
   {
     imprimirJogadores(t->jogadores);

@@ -11,12 +11,13 @@ void imprimirTreinador(void *treinador)
 {
   if (((Treinador *)treinador)->idTime > 0)
   {
-    printf("   ID Treinador: %d - Nome: %s - ID Time: %d\n", ((Treinador *)treinador)->id, ((Treinador *)treinador)->nome, ((Treinador *)treinador)->idTime);
+    printf("  ID Treinador: %d \n  Nome: %s \n  ID Time: %d\n", ((Treinador *)treinador)->id, ((Treinador *)treinador)->nome, ((Treinador *)treinador)->idTime);
   }
   else
   {
-    printf("   ID Treinador: %d - Nome: %s - Não treina nenhum time\n", ((Treinador *)treinador)->id, ((Treinador *)treinador)->nome);
+    printf("  ID Treinador: %d \n  Nome: %s \n  Não treina nenhum time\n", ((Treinador *)treinador)->id, ((Treinador *)treinador)->nome);
   }
+  printf("---------------------------------------------\n");
 }
 
 // Compara a igualdade entre treinadores.

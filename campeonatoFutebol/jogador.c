@@ -12,12 +12,26 @@ void imprimirJogador(void *jogador)
 {
   if (((Jogador *)jogador)->idTime > 0)
   {
-    printf("   ID: %d - Nome: %s - Idade: %d - ID Time: %d \n", ((Jogador *)jogador)->id, ((Jogador *)jogador)->nome, ((Jogador *)jogador)->idade, ((Jogador *)jogador)->idTime);
+    printf("  ID: %d \n  Nome: %s \n  Idade: %d \n  ID Time: %d \n", ((Jogador *)jogador)->id, ((Jogador *)jogador)->nome, ((Jogador *)jogador)->idade, ((Jogador *)jogador)->idTime);
   }
   else
   {
-    printf("   ID: %d - Nome: %s - Idade: %d - Não possui time\n", ((Jogador *)jogador)->id, ((Jogador *)jogador)->nome, ((Jogador *)jogador)->idade);
+    printf("  ID: %d \n  Nome: %s \n  Idade: %d \n  Não possui time\n", ((Jogador *)jogador)->id, ((Jogador *)jogador)->nome, ((Jogador *)jogador)->idade);
   }
+  printf("  Posicao: ");
+  switch (((Jogador *)jogador)->posicao)
+  {
+  case 0:
+    printf("Goleiro \n");
+    break;
+  case 1:
+    printf("Atacante \n");
+    break;
+  case 2:
+    printf("Zagueiro \n");
+    break;
+  }
+  printf("-----------------------------------------------------\n");
 }
 
 // Compara a igualdade entre jogadores.
