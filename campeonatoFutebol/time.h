@@ -23,7 +23,7 @@ typedef struct Time
   int golsSofridos;
 } Time;
 
-Time *criarTime(const char *nome);
+Time *criarTime(const char *nome, const char *estadio, const char *cidade, const char *dataFundacao);
 Time *buscarTime(Lista *times, int id);
 Lista *retirarTime(Lista *times, int id);
 Lista *retirarTimeP(Lista *times, Time *time);
