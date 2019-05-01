@@ -14,7 +14,7 @@ void imprimirTime(void *time)
 {
   Time *t = (Time *)time;
   printf("--------------------------------\n");
-  printf("ID Time: %d - %s\n", t->id, t->nome);
+  printf("ID Time: %d - %s - Estadio: %s - Cidade: %s\n", t->id, t->nome, t->estadio, t->cidade);
   if (t->jogadores != NULL)
   {
     imprimirJogadores(t->jogadores);
@@ -48,17 +48,25 @@ Time *criarTimePK()
 {
   Time *t = (Time *)malloc(sizeof(Time));
   t->nome = (char *)malloc(sizeof(char) * 50);
+  t->cidade = (char *)malloc(sizeof(char) * 50);
+  t->estadio = (char *)malloc(sizeof(char) * 50);
+  t->dataFundacao = (char *)malloc(sizeof(char) * 50);
   t->id = gerarIdTime();
   t->jogadores = criar();
   t->idTreinador = -1;
+  t->golsFeitos = 0;
+  t->golsSofridos = 0;
   return t;
 }
 
 // Cria um time com o id e o nome preenchidos
-Time *criarTime(const char *nome)
+Time *criarTime(const char *nome, const char *estadio, const char *cidade, const char *dataFundacao)
 {
   Time *t = criarTimePK();
   strcpy(t->nome, nome);
+  strcpy(t->estadio, estadio);
+  strcpy(t->cidade, cidade);
+  strcpy(t->dataFundacao, dataFundacao);
   return t;
 }
 
