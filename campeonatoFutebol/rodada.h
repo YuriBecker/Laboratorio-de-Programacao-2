@@ -10,6 +10,7 @@
 #include "lista.h"
 #include "time.h"
 #include "jogador.h"
+#include "treinador.h"
 #include "partida.h"
 
 typedef struct Rodada
@@ -17,5 +18,10 @@ typedef struct Rodada
   int id;
   Lista *partidas;
 } Rodada;
+
+bool rodadasIguais(void *rodada1, void *rodada2);
+Rodada *criarRodada();
+Rodada *buscarRodada(Lista *rodadas, int id);
+void imprimirRodadas(Lista *rodadas);
 
 #endif
