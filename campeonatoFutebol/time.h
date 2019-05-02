@@ -31,5 +31,6 @@ Lista *retirarTimeP(Lista *times, Time *time);
 void desinscrever(Time *time, int id);
 void inscrever(Time *time, Jogador *jogador);
 void imprimirTimes(Lista *times);
-
+bool verificarTimes(Lista *times);
+bool potenciaDeDois(int num);
 #endif

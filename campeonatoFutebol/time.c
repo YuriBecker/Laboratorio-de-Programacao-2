@@ -1,14 +1,6 @@
 
 #include "time.h"
 
-/*
-   Funcoes obrigatorias.
-   
-   As funcoes a seguir sao necessarias para parametrizar as funcoes genericas
-   da lista de void. 
-
-*/
-
 // Mostra na tela os dados de um time.
 void imprimirTime(void *time)
 {
@@ -27,15 +19,6 @@ bool timesIguais(void *time1, void *time2)
 {
   return ((Time *)time1)->id == ((Time *)time2)->id;
 }
-
-/*
-  Funcoes opcionais.
-  
-  As funcoes a seguir sao auxiliares. Elas foram criadas para facilitar a escrita 
-  do id cliente e para melhorar sua legibilidade.
-  
-  Neste exemplo, todo o id cliente esta no arquivo main.
-*/
 
 unsigned int gerarIdTime()
 {
@@ -70,9 +53,6 @@ Time *criarTime(const char *nome, const char *estadio, const char *cidade, const
   return t;
 }
 
-/* Em C++ as funcoes criarJogador e criarJogadorPK poderiam ser 
-   sobrecarregadas (terem o mesmo nome) */
-
 // Busca um time pelo código.
 Time *buscarTime(Lista *times, int id)
 {
@@ -96,9 +76,6 @@ void desinscrever(Time *time, int id)
   time->jogadores = retirarJogadorP(time->jogadores, buscarJogador(time->jogadores, id));
 }
 
-/* Em C++ as funcoes retirarTime e retirarTimeP poderiam ser 
-   sobrecarregadas (terem o mesmo nome) */
-
 // Retira um time através de um ponteiro para este time.
 Lista *retirarTimeP(Lista *times, Time *time)
 {
@@ -111,11 +88,88 @@ Lista *retirarTime(Lista *times, int id)
   return retirarTimeP(times, buscarTime(times, id));
 }
 
-/* Em C++ as funcoes retirarJogador e retirarJogadorP poderiam ser 
-   sobrecarregadas (terem o mesmo nome) */
-
 // Imprime a lista de times usando a funcao auxiliar imprimirTime
 void imprimirTimes(Lista *times)
 {
   imprimir(times, &imprimirTime);
+}
+
+//verifica se eh possivel inicar um campeonato
+bool verificarTimes(Lista *times)
+{
+  int numTimes = 0;
+  bool aprovado = true;
+  if (!vazia(times))
+  {
+    Lista *temp = times;
+    while (!vazia(temp))
+    {
+      int numJogadores = 0;
+      bool goleiro = false;
+      if (((Time *)temp->info)->idTreinador < 1)
+      {
+        printf("\n %s nao possui treinador!\n", ((Time *)temp->info)->nome);
+        aprovado = false;
+      }
+
+      Lista *jogador = ((Time *)temp->info)->jogadores;
+      while (!vazia(jogador))
+      {
+        if (((Jogador *)jogador->info)->posicao == GOLEIRO)
+          goleiro = true;
+        numJogadores++;
+        jogador = jogador->prox;
+      }
+      if (!goleiro)
+      {
+        printf("\n %s nao possui goleiro!\n", ((Time *)temp->info)->nome);
+        aprovado = false;
+      }
+      if (numJogadores < 7)
+      {
+        printf("\n %s possui menos de 7 jogadores!\n", ((Time *)temp->info)->nome);
+        aprovado = false;
+      }
+      else
+      {
+        if (numJogadores > 25)
+        {
+          printf("\n %s possui mais de 25 jogadores\n", ((Time *)temp->info)->nome);
+          aprovado = false;
+        }
+      }
+
+      temp = temp->prox;
+      numTimes++;
+      printf("\n");
+    }
+    if (!potenciaDeDois(numTimes))
+    {
+      printf("\n O numero de times cadastrados nao eh potencia de dois!\n");
+      aprovado = false;
+    }
+  }
+  else
+  {
+    printf("\n\nNenhum time cadastrado!\n");
+    aprovado = false;
+  }
+  return aprovado;
+}
+
+bool potenciaDeDois(int num)
+{
+  switch (num)
+  {
+  case 2:
+  case 4:
+  case 8:
+  case 16:
+  case 32:
+  case 64:
+    return true;
+  default:
+    return false;
+    break;
+  }
 }

@@ -17,15 +17,17 @@ void limpaTela()
 void textoMenuPrincipal()
 {
   limpaTela();
+  printf("-------Menu Inicial--------\n");
   printf("\nEscolha uma opcao:\n");
   printf("\n1- Menu de Times");
   printf("\n2- Menu de Jogadores");
   printf("\n3- Menu de Treinadores");
+  printf("\n4- Iniciar Campeonato Mata Mata");
   printf("\n0- Sair");
   printf("\n\nOpcao: ");
 }
 
-void menuPrincipal(Lista **times, Lista **jogadores, Lista **treinadores, bool *sair)
+void menuPrincipal(Lista **times, Lista **jogadores, Lista **treinadores, Lista **rodadas, Lista **partidas, bool *sair)
 {
   int opc;
   textoMenuPrincipal();
@@ -41,6 +43,14 @@ void menuPrincipal(Lista **times, Lista **jogadores, Lista **treinadores, bool *
   case 3:
     *treinadores = menuTreinadores(*treinadores, *times);
     break;
+  case 4:
+    textoAvisoCampeonato();
+    if (verificarTimes(*times))
+    {
+      printf("\nTUDO CERTO CORNO!!!!!!!!!!!\n");
+    }
+    aguardarTecla();
+    break;
   case 0:
     *sair = true;
     break;
@@ -48,6 +58,18 @@ void menuPrincipal(Lista **times, Lista **jogadores, Lista **treinadores, bool *
     printf("Entrada invalida!\n");
     sleep(1);
   }
+}
+
+void textoAvisoCampeonato()
+{
+  limpaTela();
+  printf("\n\n Para iniciar o campeonato voce precisa de:\n");
+  printf(" * 2, 4, 8, 16, 32 ou 64 Times cadastrados (Alguma potencia de 2)\n");
+  printf(" * Todos times devem ter no minimo 7 e no maximo 25 jogadores\n");
+  printf(" * Todos times precisam de pelo menos um goleiro\n");
+  printf(" * Todos times precisam de um tecnico\n");
+  printf(" * Depois de iniciar o campeonato voce nao podera alterar (Adicionar ou Remover)\n os jogadores, times ou treinadores!\n");
+  printf(" * A unica mudanca que podera fazer é a troca da escalacao dos times antes de \ncada partida!\n");
 }
 
 void textoMenuJogadores()
@@ -213,15 +235,15 @@ Lista *menuJogadores(Lista *jogadores, Lista *times)
 Lista *criaJogadoresAutomaticamente(Lista *jogadores)
 {
   limpaTela();
-  jogadores = inserirFim(jogadores, criarJogador("Pedro", ATACANTE, 19, 2));
   jogadores = inserirFim(jogadores, criarJogador("Paulo", GOLEIRO, 20, 1));
+  jogadores = inserirFim(jogadores, criarJogador("Pedro", ATACANTE, 19, 2));
   jogadores = inserirFim(jogadores, criarJogador("Mario", ZAGUEIRO, 25, 3));
   jogadores = inserirFim(jogadores, criarJogador("Miguel", ATACANTE, 21, 4));
   jogadores = inserirFim(jogadores, criarJogador("Fernando", ZAGUEIRO, 22, 5));
   jogadores = inserirFim(jogadores, criarJogador("Ricardo", ATACANTE, 25, 6));
   jogadores = inserirFim(jogadores, criarJogador("Eduardo", ZAGUEIRO, 25, 7));
-  jogadores = inserirFim(jogadores, criarJogador("Pedro", ATACANTE, 19, 2));
   jogadores = inserirFim(jogadores, criarJogador("Marcos", GOLEIRO, 20, 1));
+  jogadores = inserirFim(jogadores, criarJogador("Pedro", ATACANTE, 19, 2));
   jogadores = inserirFim(jogadores, criarJogador("Daniel", ZAGUEIRO, 25, 3));
   jogadores = inserirFim(jogadores, criarJogador("Lucas", ATACANTE, 21, 4));
   jogadores = inserirFim(jogadores, criarJogador("Ricardo", ZAGUEIRO, 22, 5));
@@ -270,7 +292,6 @@ Lista *menuTimes(Lista *jogadores, Lista *times)
       printf("\nTime criado com sucesso!\n");
       aguardarTecla();
       break;
-      break;
     case 2:
       limpaTela();
       printf("\n\nDigite o ID do time a ser excluido: ");
@@ -279,8 +300,15 @@ Lista *menuTimes(Lista *jogadores, Lista *times)
       {
         if (buscarTime(times, id)->jogadores == NULL)
         {
-          printf("\nTime %s excluido com sucesso!\n", (buscarTime(times, id))->nome);
-          times = retirarTime(times, id);
+          if (buscarTime(times, id)->idTreinador == -1)
+          {
+            printf("\nTime %s excluido com sucesso!\n", (buscarTime(times, id))->nome);
+            times = retirarTime(times, id);
+          }
+          else
+          {
+            printf("\nRemova antes o treinador do %s para poder excluir o time!\n", (buscarTime(times, id))->nome);
+          }
         }
         else
         {
