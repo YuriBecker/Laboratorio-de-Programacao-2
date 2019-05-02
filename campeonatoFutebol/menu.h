@@ -13,7 +13,7 @@
 #include "treinador.h"
 
 void limpaTela();
-void menuPrincipal(Lista **times, Lista **jogadores, Lista **treinadores, bool *sair);
+void menuPrincipal(Lista **times, Lista **jogadores, Lista **treinadores, Lista **rodadas, Lista **partidas, bool *sair);
 void textoMenuPrincipal();
 Lista *menuJogadores(Lista *jogadores, Lista *times);
 void textoMenuJogadores();
@@ -22,6 +22,7 @@ void textoMenuTimes();
 void aguardarTecla();
 void textoMenuTreinadores();
 Lista *menuTreinadores(Lista *treinadores, Lista *times);
+void textoAvisoCampeonato();
 
 Lista *criaJogadoresAutomaticamente(Lista *jogadores);
 Lista *criaTimesAutomaticamente(Lista *times);
