@@ -21,6 +21,8 @@ typedef struct Time
   int idTreinador;
   int golsFeitos;
   int golsSofridos;
+  bool eliminado;
+  int pontos;
 } Time;
 
 Time *criarTime(const char *nome, const char *estadio, const char *cidade, const char *dataFundacao);

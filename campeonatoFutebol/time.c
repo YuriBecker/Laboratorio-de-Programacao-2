@@ -39,6 +39,8 @@ Time *criarTimePK()
   t->idTreinador = -1;
   t->golsFeitos = 0;
   t->golsSofridos = 0;
+  t->eliminado = false;
+  t->pontos = 0;
   return t;
 }
 

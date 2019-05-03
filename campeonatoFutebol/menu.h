@@ -14,7 +14,7 @@
 #include "campeonato.h"
 
 void limpaTela();
-void menuPrincipal(Lista **times, Lista **jogadores, Lista **treinadores, Lista **rodadas, Lista **partidas, bool *sair);
+void menuPrincipal(Lista **times, Lista **jogadores, Lista **treinadores, Lista **rodadas, bool *sair);
 void textoMenuPrincipal();
 Lista *menuJogadores(Lista *jogadores, Lista *times);
 void textoMenuJogadores();
