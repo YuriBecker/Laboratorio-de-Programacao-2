@@ -17,7 +17,7 @@ typedef struct Escalacao
   int idPartida;
   Time *time;
   //Minimo 7 jogadores
-  int idJogadoresEscalados[11];
+  int idJogadoresEscalados[12];
 } Escalacao;
 
 typedef struct Partida
