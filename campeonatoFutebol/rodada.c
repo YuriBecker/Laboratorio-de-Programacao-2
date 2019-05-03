@@ -4,9 +4,18 @@
 void imprimirRodada(void *rodada)
 {
   Rodada *r = (Rodada *)rodada;
-  printf("\n--------------RODADA %d-------------\n", r->id);
-  imprimirPartidas(r->partidas);
-  printf("\n------------------------------------\n\n");
+  if (r->preenchida)
+  {
+    printf("\n--------------RODADA %d-------------\n", r->id);
+    imprimirPartidas(r->partidas);
+    printf("\n------------------------------------\n\n");
+  }
+  else
+  {
+    printf("\n--------------RODADA %d-------------\n", r->id);
+    printf("\n             INDEFINIDA            \n");
+    printf("\n------------------------------------\n\n");
+  }
 }
 
 bool rodadasIguais(void *rodada1, void *rodada2)
@@ -25,6 +34,7 @@ Rodada *criarRodada()
   Rodada *r = (Rodada *)malloc(sizeof(Rodada));
   r->id = gerarIdRodada();
   r->partidas = criar();
+  r->preenchida = false;
   return r;
 }
 

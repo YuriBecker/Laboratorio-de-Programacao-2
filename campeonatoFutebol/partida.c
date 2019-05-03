@@ -4,9 +4,19 @@
 void imprimirPartida(void *partida)
 {
   Partida *p = (Partida *)partida;
-  printf("--------------------------------\n");
-  printf("\n %s X %s \n", p->time1->nome, p->time2->nome);
-  printf("--------------------------------\n");
+  if (p->ocorreu == false)
+  {
+    printf("\n--------------------------------");
+    printf("\n %s X %s \n", p->time1->nome, p->time2->nome);
+    printf("--------------------------------");
+  }
+  else
+  {
+    printf("\n--------------------------------");
+    printf("\n %s X %s -> ", p->time1->nome, p->time2->nome);
+    printf(" %d X %d \n", p->golsTime1, p->golsTime2);
+    printf("--------------------------------");
+  }
 }
 
 bool partidasIguais(void *partida1, void *partida2)
