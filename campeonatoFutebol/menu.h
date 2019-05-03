@@ -11,6 +11,7 @@
 #include "time.h"
 #include "jogador.h"
 #include "treinador.h"
+#include "campeonato.h"
 
 void limpaTela();
 void menuPrincipal(Lista **times, Lista **jogadores, Lista **treinadores, Lista **rodadas, Lista **partidas, bool *sair);

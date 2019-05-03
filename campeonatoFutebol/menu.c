@@ -45,11 +45,25 @@ void menuPrincipal(Lista **times, Lista **jogadores, Lista **treinadores, Lista 
     break;
   case 4:
     textoAvisoCampeonato();
-    if (verificarTimes(*times))
+    // if (verificarTimes(*times))
+    if (1)
     {
-      printf("\nTUDO CERTO CORNO!!!!!!!!!!!\n");
+      int opc;
+      printf("\nTUDO CERTO! DESEJA INICIAR O CAMPEONATO ?\n  1- SIM\n  2-NAO\n\nOpc:");
+      scanf("%d", &opc);
+      if (opc == 1)
+      {
+        iniciarCampeonato(*jogadores, *times, *rodadas, *partidas);
+      }
+      else
+      {
+        return;
+      }
     }
-    aguardarTecla();
+    else
+    {
+      aguardarTecla();
+    }
     break;
   case 0:
     *sair = true;
