@@ -17,6 +17,7 @@ typedef struct Rodada
 {
   int id;
   Lista *partidas;
+  bool preenchida;
 } Rodada;
 
 bool rodadasIguais(void *rodada1, void *rodada2);
