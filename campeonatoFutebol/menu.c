@@ -27,7 +27,7 @@ void textoMenuPrincipal()
   printf("\n\nOpcao: ");
 }
 
-void menuPrincipal(Lista **times, Lista **jogadores, Lista **treinadores, Lista **rodadas, Lista **partidas, bool *sair)
+void menuPrincipal(Lista **times, Lista **jogadores, Lista **treinadores, Lista **rodadas, bool *sair)
 {
   int opc;
   textoMenuPrincipal();
@@ -53,7 +53,7 @@ void menuPrincipal(Lista **times, Lista **jogadores, Lista **treinadores, Lista 
       scanf("%d", &opc);
       if (opc == 1)
       {
-        iniciarCampeonato(*jogadores, *times, *rodadas, *partidas);
+        iniciarCampeonato(*jogadores, *times, *rodadas);
       }
       else
       {

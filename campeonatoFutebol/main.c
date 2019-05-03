@@ -17,10 +17,9 @@ int main(int argc, char *argv[])
   Lista *jogadores = criar();
   Lista *treinadores = criar();
   Lista *rodadas = criar();
-  Lista *partidas = criar();
 
   while (!sair)
   {
-    menuPrincipal(&times, &jogadores, &treinadores, &rodadas, &partidas, &sair);
+    menuPrincipal(&times, &jogadores, &treinadores, &rodadas, &sair);
   }
 }
