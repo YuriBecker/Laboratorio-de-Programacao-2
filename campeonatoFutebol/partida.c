@@ -35,7 +35,15 @@ Partida *criarPartida(Time *time1, Time *time2)
   Partida *p = (Partida *)malloc(sizeof(Partida));
   p->id = gerarIdPartida();
   p->escTime1 = (Escalacao *)malloc(sizeof(Escalacao));
+  for (size_t i = 0; i < 12; i++)
+  {
+    p->escTime1->idJogadoresEscalados[i] = -1;
+  }
   p->escTime2 = (Escalacao *)malloc(sizeof(Escalacao));
+  for (size_t i = 0; i < 12; i++)
+  {
+    p->escTime2->idJogadoresEscalados[i] = -1;
+  }
   p->golsTime1 = 0;
   p->golsTime2 = 0;
   p->time1 = time1;
