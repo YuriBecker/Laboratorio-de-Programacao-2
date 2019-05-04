@@ -25,6 +25,6 @@ void textoMenuTreinadores();
 Lista *menuTreinadores(Lista *treinadores, Lista *times);
 void textoAvisoCampeonato();
 
-Lista *criaJogadoresAutomaticamente(Lista *jogadores);
+Lista *criaJogadoresAutomaticamente(Lista *jogadores, Lista *times);
 Lista *criaTimesAutomaticamente(Lista *times);
 #endif

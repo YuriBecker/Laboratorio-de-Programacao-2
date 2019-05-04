@@ -45,8 +45,7 @@ void menuPrincipal(Lista **times, Lista **jogadores, Lista **treinadores, Lista 
     break;
   case 4:
     textoAvisoCampeonato();
-    // if (verificarTimes(*times))
-    if (1)
+    if (verificarTimes(*times))
     {
       int opc;
       printf("\nTUDO CERTO! DESEJA INICIAR O CAMPEONATO ?\n  1- SIM\n  2-NAO\n\nOpc:");
@@ -96,7 +95,7 @@ void textoMenuJogadores()
   printf("\n4- Buscar jogador pelo id");
   printf("\n5- Adicionar jogador em um time");
   printf("\n6- Remover jogador do time");
-  printf("\n7- Adicionar jogadores automaticamente");
+  printf("\n7- Adicionar jogadores e colocar nos times automaticamente");
   printf("\n0- Voltar para o menu principal");
   printf("\n\nOpcao: ");
 }
@@ -235,7 +234,7 @@ Lista *menuJogadores(Lista *jogadores, Lista *times)
       aguardarTecla();
       break;
     case 7:
-      jogadores = criaJogadoresAutomaticamente(jogadores);
+      jogadores = criaJogadoresAutomaticamente(jogadores, times);
       break;
     case 0:
       return jogadores;
@@ -246,23 +245,69 @@ Lista *menuJogadores(Lista *jogadores, Lista *times)
   }
 }
 
-Lista *criaJogadoresAutomaticamente(Lista *jogadores)
+Lista *criaJogadoresAutomaticamente(Lista *jogadores, Lista *times)
 {
   limpaTela();
+  //TIME 1
   jogadores = inserirFim(jogadores, criarJogador("Paulo", GOLEIRO, 20, 1));
+  inscrever(buscarTime(times, 1), buscarJogador(jogadores, 1));
   jogadores = inserirFim(jogadores, criarJogador("Pedro", ATACANTE, 19, 2));
+  inscrever(buscarTime(times, 1), buscarJogador(jogadores, 2));
   jogadores = inserirFim(jogadores, criarJogador("Mario", ZAGUEIRO, 25, 3));
+  inscrever(buscarTime(times, 1), buscarJogador(jogadores, 3));
   jogadores = inserirFim(jogadores, criarJogador("Miguel", ATACANTE, 21, 4));
+  inscrever(buscarTime(times, 1), buscarJogador(jogadores, 4));
   jogadores = inserirFim(jogadores, criarJogador("Fernando", ZAGUEIRO, 22, 5));
+  inscrever(buscarTime(times, 1), buscarJogador(jogadores, 5));
   jogadores = inserirFim(jogadores, criarJogador("Ricardo", ATACANTE, 25, 6));
+  inscrever(buscarTime(times, 1), buscarJogador(jogadores, 6));
   jogadores = inserirFim(jogadores, criarJogador("Eduardo", ZAGUEIRO, 25, 7));
+  inscrever(buscarTime(times, 1), buscarJogador(jogadores, 7));
+  //TIME 2
   jogadores = inserirFim(jogadores, criarJogador("Marcos", GOLEIRO, 20, 1));
+  inscrever(buscarTime(times, 2), buscarJogador(jogadores, 8));
   jogadores = inserirFim(jogadores, criarJogador("Pedro", ATACANTE, 19, 2));
+  inscrever(buscarTime(times, 2), buscarJogador(jogadores, 9));
   jogadores = inserirFim(jogadores, criarJogador("Daniel", ZAGUEIRO, 25, 3));
+  inscrever(buscarTime(times, 2), buscarJogador(jogadores, 10));
   jogadores = inserirFim(jogadores, criarJogador("Lucas", ATACANTE, 21, 4));
+  inscrever(buscarTime(times, 2), buscarJogador(jogadores, 11));
   jogadores = inserirFim(jogadores, criarJogador("Ricardo", ZAGUEIRO, 22, 5));
+  inscrever(buscarTime(times, 2), buscarJogador(jogadores, 12));
   jogadores = inserirFim(jogadores, criarJogador("Ze", ATACANTE, 25, 6));
+  inscrever(buscarTime(times, 2), buscarJogador(jogadores, 13));
   jogadores = inserirFim(jogadores, criarJogador("Marcelo", ZAGUEIRO, 25, 7));
+  inscrever(buscarTime(times, 2), buscarJogador(jogadores, 14));
+  //TIME 3
+  jogadores = inserirFim(jogadores, criarJogador("Paulo", GOLEIRO, 20, 1));
+  inscrever(buscarTime(times, 3), buscarJogador(jogadores, 15));
+  jogadores = inserirFim(jogadores, criarJogador("Pedro", ATACANTE, 19, 2));
+  inscrever(buscarTime(times, 3), buscarJogador(jogadores, 16));
+  jogadores = inserirFim(jogadores, criarJogador("Mario", ZAGUEIRO, 25, 3));
+  inscrever(buscarTime(times, 3), buscarJogador(jogadores, 17));
+  jogadores = inserirFim(jogadores, criarJogador("Miguel", ATACANTE, 21, 4));
+  inscrever(buscarTime(times, 3), buscarJogador(jogadores, 18));
+  jogadores = inserirFim(jogadores, criarJogador("Fernando", ZAGUEIRO, 22, 5));
+  inscrever(buscarTime(times, 3), buscarJogador(jogadores, 19));
+  jogadores = inserirFim(jogadores, criarJogador("Ricardo", ATACANTE, 25, 6));
+  inscrever(buscarTime(times, 3), buscarJogador(jogadores, 20));
+  jogadores = inserirFim(jogadores, criarJogador("Eduardo", ZAGUEIRO, 25, 7));
+  inscrever(buscarTime(times, 3), buscarJogador(jogadores, 21));
+  //TIME 4
+  jogadores = inserirFim(jogadores, criarJogador("Marcos", GOLEIRO, 20, 1));
+  inscrever(buscarTime(times, 4), buscarJogador(jogadores, 22));
+  jogadores = inserirFim(jogadores, criarJogador("Pedro", ATACANTE, 19, 2));
+  inscrever(buscarTime(times, 4), buscarJogador(jogadores, 23));
+  jogadores = inserirFim(jogadores, criarJogador("Daniel", ZAGUEIRO, 25, 3));
+  inscrever(buscarTime(times, 4), buscarJogador(jogadores, 24));
+  jogadores = inserirFim(jogadores, criarJogador("Lucas", ATACANTE, 21, 4));
+  inscrever(buscarTime(times, 4), buscarJogador(jogadores, 25));
+  jogadores = inserirFim(jogadores, criarJogador("Ricardo", ZAGUEIRO, 22, 5));
+  inscrever(buscarTime(times, 4), buscarJogador(jogadores, 26));
+  jogadores = inserirFim(jogadores, criarJogador("Ze", ATACANTE, 25, 6));
+  inscrever(buscarTime(times, 4), buscarJogador(jogadores, 27));
+  jogadores = inserirFim(jogadores, criarJogador("Marcelo", ZAGUEIRO, 25, 7));
+  inscrever(buscarTime(times, 4), buscarJogador(jogadores, 28));
   printf("\nJogadores adicionados com sucesso!\n");
   aguardarTecla();
   return jogadores;
