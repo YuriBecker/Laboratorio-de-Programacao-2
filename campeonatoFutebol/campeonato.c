@@ -60,6 +60,7 @@ void menuCampeonato(Lista *jogadores, Lista *times, Lista *rodadas)
   while (1)
   {
     limpaTela();
+    // verificaRodadas(rodadas, times);
     textoMenuCampeonato();
     int opc;
     scanf("%d", &opc);
@@ -83,7 +84,7 @@ void menuCampeonato(Lista *jogadores, Lista *times, Lista *rodadas)
       relatorioJogadores(jogadores);
       break;
     case 6:
-      rodadas = iniciarNarracao(rodadas);
+      rodadas = iniciarNarracao(rodadas, times);
       break;
     case 0:
       exit(0);
@@ -95,17 +96,39 @@ void menuCampeonato(Lista *jogadores, Lista *times, Lista *rodadas)
   }
 }
 
-Lista *iniciarNarracao(Lista *rodadas)
+Lista *iniciarNarracao(Lista *rodadas, Lista *times)
 {
   int opc;
   Lista *temp = rodadas;
   //Procura a rodada mais atualizada
   while (((Rodada *)temp->prox->info)->preenchida)
   {
+    // if (((Rodada *)ultimo(rodadas))->id != ((Rodada *)temp->prox->info)->id)
+    //   temp = temp->prox;
+    // else
+    // {
+    //   printf("\n\nULTIMA RODADA");
+    // }
     temp = temp->prox;
   }
   Rodada *rodada = (Rodada *)temp->info;
   Lista *partidasAux = rodada->partidas;
+  // if (partidasAux == NULL)
+  // {
+  //   Lista *tAux = times;
+  //   Lista *t = criar();
+  //   while (!vazia(tAux))
+  //   {
+  //     if (((Time *)tAux->info)->eliminado == false)
+  //       t = inserirFim(t, tAux->info);
+  //     tAux = tAux->prox;
+  //   }
+  //   while (!vazia(t))
+  //   {
+  //     rodada->partidas = inserirFim(rodada->partidas, criarPartida(((Time *)t->info), ((Time *)t->prox->info)));
+  //     t = t->prox->prox;
+  //   }
+  // }
   //Procura a proxima partida da rodada
   while (((Partida *)partidasAux->info)->ocorreu)
   {
@@ -119,7 +142,45 @@ Lista *iniciarNarracao(Lista *rodadas)
   scanf("%d", &opc);
   if (opc == 1)
   {
-    narrarPartida(proxPartida);
+    narrarPartida(proxPartida, (Rodada *)temp->info);
+    int qtd = 0;
+    int qtd2 = 0;
+    partidasAux = rodada->partidas;
+    Lista *t = times;
+    while (!vazia(partidasAux))
+    {
+      qtd++;
+      partidasAux = partidasAux->prox;
+    }
+    while (!vazia(t))
+    {
+      if (((Time *)t->info)->pontos == rodada->id)
+        qtd2++;
+      t = t->prox;
+    }
+    if (qtd == qtd2)
+    {
+      Rodada *proxRodada = (Rodada *)temp->prox->info;
+      proxRodada->preenchida = true;
+      int *vet = (int *)malloc(sizeof(int) * qtd);
+      t = times;
+      int val = 0;
+      while (!vazia(t))
+      {
+        if (((Time *)t->info)->pontos == rodada->id)
+        {
+          vet[val] = ((Time *)t->info)->id;
+          val++;
+        }
+      }
+      for (int i = 0; i < val; i = i + 2)
+      {
+        proxRodada->partidas = inserirFim(proxRodada->partidas, criarPartida(buscarTime(times, vet[i]), buscarTime(times, vet[i + 1])));
+      }
+      printf("\n\n Proxima rodada preenchida!");
+      aguardarTecla();
+    }
+
     aguardarTecla();
   }
   else
@@ -129,7 +190,7 @@ Lista *iniciarNarracao(Lista *rodadas)
   return rodadas;
 }
 
-void narrarPartida(Partida *partida)
+void narrarPartida(Partida *partida, Rodada *rodada)
 {
   bool acabou = false;
   int opc;
@@ -162,6 +223,17 @@ void narrarPartida(Partida *partida)
     case 0:
       if (partida->golsTime1 != partida->golsTime2)
       {
+
+        if (partida->golsTime1 > partida->golsTime2)
+        {
+          partida->time2->eliminado = true;
+          partida->time1->pontos++;
+        }
+        else
+        {
+          partida->time1->eliminado = true;
+          partida->time2->pontos++;
+        }
         return;
       }
       else
@@ -339,8 +411,6 @@ void narrarPartida(Partida *partida)
       }
     }
   }
-
-  aguardarTecla();
 }
 
 bool verificaEscalacao(Escalacao *esc, int id)
@@ -474,7 +544,23 @@ void escalarJogadores(Partida *partida)
 
 void classificacaoGeralTimes(Lista *times)
 {
-  //lista ordenada
+  limpaTela();
+  Lista *temp = times;
+  while (temp != NULL)
+  {
+    if (((Time *)temp->info)->eliminado == false)
+      printf("\n %s: %d pontos", ((Time *)temp->info)->nome, ((Time *)temp->info)->pontos);
+    temp = temp->prox;
+  }
+  temp = times;
+  while (temp != NULL)
+  {
+    if (((Time *)temp->info)->eliminado)
+      printf("\n %s (Eliminado) : %d pontos", ((Time *)temp->info)->nome, ((Time *)temp->info)->pontos);
+    temp = temp->prox;
+  }
+  printf("\n\n");
+  aguardarTecla();
 }
 
 void relatorioArtilharia(Lista *jogadores)
@@ -484,8 +570,73 @@ void relatorioArtilharia(Lista *jogadores)
 
 void relatorioTimes(Lista *times)
 {
+  int id;
+  Time *t;
+  limpaTela();
+  printf("\nDigite o id do time\n");
+  printf("\nOpc: ");
+  scanf("%d", &id);
+  t = buscarTime(times, id);
+  if (t == NULL)
+  {
+    printf("\nTime nao encontrado!\n");
+    aguardarTecla();
+  }
+  else
+  {
+    limpaTela();
+    printf("\n\nNome: %s", t->nome);
+    printf("\nCidade: %s", t->cidade);
+    printf("\nData de Fundacao: %s", t->dataFundacao);
+    printf("\nEstadio: %s", t->estadio);
+    printf("\nID Treinador: %d", t->idTreinador);
+    printf("\nQuantidade de gols feitos: %d", t->golsFeitos);
+    printf("\nQuantidade de gols tomados: %d", t->golsSofridos);
+    if (t->eliminado)
+    {
+      printf("\n\nTIME FOI ELIMINADO");
+    }
+    else
+    {
+      printf("\n\nTIME COMPETINDO");
+    }
+
+    aguardarTecla();
+  }
 }
 
 void relatorioJogadores(Lista *jogadores)
 {
+  int id;
+  Jogador *j;
+  limpaTela();
+  printf("\nDigite o id do jogador\n");
+  printf("\nOpc: ");
+  scanf("%d", &id);
+  j = buscarJogador(jogadores, id);
+  if (j == NULL)
+  {
+    printf("\nJogador nao encontrado!\n");
+    aguardarTecla();
+  }
+  else
+  {
+    if (j->idTime > 0)
+    {
+      limpaTela();
+      printf("\n\nNome: %s", j->nome);
+      printf("\nIdade: %d", j->idade);
+      printf("\nNumero Camisa: %d", j->numCamisa);
+      printf("\nNumero de Gols: %d", j->gols);
+      printf("\nNumero de Faltas Cometidas: %d", j->faltas);
+      printf("\nNumero de Cartoes Vermelhos: %d", j->cartaoAmarelo);
+      printf("\nNumero de Cartoes Amarelos: %d", j->cartaoVermelho);
+      aguardarTecla();
+    }
+    else
+    {
+      printf("\nJogador nao faz parte de nenhum time!\n");
+      aguardarTecla();
+    }
+  }
 }

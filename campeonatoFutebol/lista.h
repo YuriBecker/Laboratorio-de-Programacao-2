@@ -16,6 +16,7 @@ Lista *inserirInicio(Lista *lista, void *elemento);
 Lista *inserirFim(Lista *lista, void *elemento);
 bool vazia(Lista *lista);
 Lista *liberar(Lista *lista);
+Lista *ultimo(Lista *lista);
 
 void imprimir(Lista *lista, void imprimirElemento(void *));
 void *buscar(Lista *lista, void *elemento, bool iguais(void *, void *));

@@ -22,8 +22,8 @@ void classificacaoGeralTimes(Lista *times);
 void relatorioArtilharia(Lista *jogadores);
 void relatorioTimes(Lista *times);
 void relatorioJogadores(Lista *jogadores);
-Lista *iniciarNarracao(Lista *rodadas);
-void narrarPartida(Partida *partida);
+Lista *iniciarNarracao(Lista *rodadas, Lista *times);
+void narrarPartida(Partida *partida, Rodada *rodada);
 void escalarJogadores(Partida *partida);
 bool verificaEscalacao(Escalacao *esc, int id);
 
