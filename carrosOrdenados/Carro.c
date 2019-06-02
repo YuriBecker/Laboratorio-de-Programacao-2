@@ -166,6 +166,18 @@ Lista *retirar(Lista *lista, char *placa)
   return lista;
 }
 
+bool placaJaExiste(Lista *carros, char *placa)
+{
+  Lista *aux = carros;
+  while (!vazia(aux))
+  {
+    if (!strcmp(aux->c->placa, placa))
+      return true;
+    aux = aux->prox;
+  }
+  return false;
+}
+
 Lista *liberar(Lista *lista)
 {
   while (!vazia(lista))

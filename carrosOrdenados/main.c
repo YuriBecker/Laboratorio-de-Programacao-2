@@ -25,4 +25,5 @@ int main()
   imprimir(carros);
   carros = retirar(carros, "B");
   imprimir(carros);
+  printf("\n %d", placaJaExiste(carros, "B"));
 }

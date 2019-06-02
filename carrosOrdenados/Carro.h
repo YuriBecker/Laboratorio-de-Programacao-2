@@ -21,6 +21,7 @@ typedef struct Lista
 
 Lista *criar();
 Lista *inserirOrdenado(Lista *lista, Carro *c);
+bool placaJaExiste(Lista *carros, char *placa);
 bool vazia(Lista *lista);
 void imprimir(Lista *lista);
 Carro *buscar(Lista *lista, char *placa);
