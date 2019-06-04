@@ -1,3 +1,6 @@
+#ifndef ARV_H
+#define ARV_H
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,3 +23,5 @@ void imprime(Arv *a);
 Arv *insere(Arv *a, Carro *c, int ordem);
 Arv *retira(Arv *r, Carro *c);
 Arv *busca(Arv *a, Carro *c, int ordem);
+
+#endif

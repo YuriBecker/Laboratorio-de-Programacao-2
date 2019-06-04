@@ -7,20 +7,19 @@ Arv *cria(void)
 
 Arv *busca(Arv *a, Carro *c, int ordem)
 {
-  int retornoStrcmp;
   if (a == NULL)
     return NULL;
   switch (ordem)
   {
   case PLACA:
     if (strcmp(a->carro->placa, c->placa) < 0)
-      a = buscaPlaca(a->dir, c);
+      a = busca(a->dir, c, ordem);
     else if (strcmp(a->carro->placa, c->placa) > 0)
       a = busca(a->esq, c, ordem);
     break;
   case MARCA:
     if (strcmp(a->carro->marca, c->marca) < 0)
-      a = buscaPlaca(a->dir, c);
+      a = busca(a->dir, c, ordem);
     else if (strcmp(a->carro->marca, c->marca) > 0)
       a = busca(a->esq, c, ordem);
     break;
