@@ -1,18 +1,5 @@
 #include "Menu.h"
 
-// Considere uma lista de carros, onde cada carro possui os seguintes campos: placa, marca e ano. Crie um programa com os seguintes requisitos:
-// 1. A lista deve ser ordenada fisicamente pela placa dos carros.
-// 2. Deve ser possivel incluir e excluir carros na lista.
-// 3. Deve ser mantida em memória uma árvore binária relativa à placa dos carros.
-// 4. Deve ser mantida em memória uma árvore binária cujo percurso seja equivalente à lista ordenada pelo marca.
-// 5. Deve ser mantida em memória uma árvore binária cujo percurso seja equivalente à lista ordenada pela ano.
-// 6. Deve ser possível buscar carros pela placa, usando a árvore binária auxiliar.
-// 7. Deve ser possivel listar os carros ordenadamente pela placa, percorrendo a lista.
-// 8. Deve ser possivel listar os carros ordenadamente pelo marca, através da árvore auxiliar.
-// 9. Deve ser possivel listar os carros ordenadamente pela ano, através da árvore auxiliar.
-
-// scanf(" %[^\n]s", nome);
-
 void limpaTela()
 {
   system("clear");
@@ -28,7 +15,7 @@ void aguardarTecla()
 
 void textoMenuPrincipal()
 {
-  printf("\n\n");
+  printf("\n");
   printf("MENU PRINCIPAL\n");
   printf("---------------\n");
   printf("Selecione uma opcao abaixo\n\n");
@@ -42,35 +29,91 @@ void textoMenuPrincipal()
   printf("Opc: ");
 }
 
-void menuPrincipal(Lista **carros, bool *sair)
+void menuPrincipal(Lista **carros, Arv **arvPlaca, Arv **arvMarca, Arv **arvAno, bool *sair)
 {
   int opc;
+  //infos para cadastro
+  Carro *c = NULL;
+  Arv *arvAux = NULL;
+  char placa[7];
+  char marca[15];
+  int ano;
+
   textoMenuPrincipal();
   scanf("%d", &opc);
   limpaTela();
-
   switch (opc)
   {
   case 1:
+    do
+    {
+      limpaTela();
+      printf("\nADICIONANDO NOVO CARRO\n\n");
+      printf("PLACA: ");
+      scanf(" %[^\n]s", placa);
+    } while (placaJaExiste(*carros, placa));
+    printf("\nMARCA: ");
+    scanf(" %[^\n]s", marca);
+    printf("\nANO: ");
+    scanf("%d", &ano);
+    c = novoCarro(placa, marca, ano);
+    *carros = inserirOrdenado(*carros, c);
+    *arvAno = insere(*arvAno, c, ANO);
+    *arvMarca = insere(*arvMarca, c, MARCA);
+    *arvPlaca = insere(*arvPlaca, c, PLACA);
+    limpaTela();
+    printf("\n\nCARRO ADICIONADO COM SUCESSO!");
     aguardarTecla();
     break;
   case 2:
-    /* code */
+    printf("\n\nREMOVER CARRO COM A PLACA: ");
+    scanf(" %[^\n]s", placa);
+    c = novoCarro(placa, "", 0);
+    arvAux = busca(*arvPlaca, c, PLACA);
+    free(c);
+    if (arvAux == NULL)
+    {
+      printf("\n\nPLACA NAO ENCONTRADA!");
+    }
+    else
+    {
+      *arvMarca = retira(*arvMarca, arvAux->carro);
+      *arvAno = retira(*arvAno, arvAux->carro);
+      *arvPlaca = retira(*arvPlaca, arvAux->carro);
+      *carros = retirar(*carros, arvAux->carro->placa);
+      printf("\n\nCARRO REMOVIDO COM SUCESSO!");
+    }
     aguardarTecla();
     break;
   case 3:
-    /* code */
+    printf("\n\nBUSCAR PLACA: ");
+    scanf(" %[^\n]s", placa);
+    c = novoCarro(placa, "", 0);
+    arvAux = busca(*arvPlaca, c, PLACA);
+    free(c);
+    if (arvAux == NULL)
+    {
+      printf("\n\nPLACA NAO ENCONTRADA!");
+    }
+    else
+    {
+      printf("\n\nCarro: %s - %s - %d", arvAux->carro->placa, arvAux->carro->marca, arvAux->carro->ano);
+    }
     aguardarTecla();
     break;
   case 4:
+    printf("\nLISTA DE CARROS ORDENADOS PELA PLACA!\n\n");
+    imprimir(*carros);
     aguardarTecla();
     break;
   case 5:
-    /* code */
+    printf("\nLISTA DE CARROS ORDENADOS PELA MARCA!\n\n");
+    imprime(*arvMarca);
     aguardarTecla();
     break;
   case 6:
-    /* code */
+    printf("\nLISTA DE CARROS ORDENADOS PELO ANO!\n\n");
+    imprime(*arvAno);
     aguardarTecla();
     break;
   case 0:

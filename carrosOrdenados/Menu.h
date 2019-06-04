@@ -8,7 +8,7 @@
 #include "Carro.h"
 #include "ArvBinBusca.h"
 
-void menuPrincipal(Lista **carros, bool *sair);
+void menuPrincipal(Lista **carros, Arv **arvPlaca, Arv **arvMarca, Arv **arvAno, bool *sair);
 void textoMenuPrincipal();
 void limpaTela();
 void aguardarTecla();
