@@ -39,68 +39,35 @@ Lista *inserirOrdenado(Lista *lista, Carro *c)
 {
   Lista *novoNo = (Lista *)malloc(sizeof(Lista));
   novoNo->c = c;
-  if (vazia(lista))
-  {
-    novoNo->prox = lista;
-    return novoNo;
-  }
-  else
-  {
-    Lista *aux = lista;
-    Lista *anterior;
-    while (aux != NULL)
-    {
-      if (strcmp(novoNo->c->placa, aux->c->placa) > 0)
-        break;
-      anterior = aux;
-      aux = aux->prox;
-    }
-    if (aux != NULL)
-    {
-      novoNo->prox = aux->prox;
-      aux->prox = novoNo;
-      return lista;
-    }
-    else
-    {
-      novoNo->prox = lista;
-      return novoNo;
-    }
-  }
-}
 
-Lista *inserirOrdemDesc(Lista *lista, Carro *c)
-{
-  Lista *novoNo = (Lista *)malloc(sizeof(Lista));
-  novoNo->c = c;
   if (vazia(lista))
   {
     novoNo->prox = lista;
     return novoNo;
   }
+
+  Lista *aux = lista;
+  Lista *anterior = criar();
+
+  while (aux != NULL)
+  {
+    if (strcmp(novoNo->c->placa, aux->c->placa) < 0)
+      break;
+    anterior = aux;
+    aux = aux->prox;
+  }
+
+  if (anterior == NULL)
+  {
+    lista = novoNo;
+    novoNo->prox = aux;
+    return lista;
+  }
   else
   {
-    Lista *aux = lista;
-    Lista *anterior;
-    while (aux != NULL)
-    {
-      if (strcmp(aux->c->placa, novoNo->c->placa) < 0)
-        break;
-      anterior = aux;
-      aux = aux->prox;
-    }
-    if (aux != NULL)
-    {
-      anterior->prox = novoNo;
-      novoNo->prox = aux;
-      return lista;
-    }
-    else
-    {
-      ultimo(lista)->prox = novoNo;
-      novoNo->prox = NULL;
-      return lista;
-    }
+    anterior->prox = novoNo;
+    novoNo->prox = aux;
+    return lista;
   }
 }
 
@@ -161,7 +128,6 @@ Lista *retirar(Lista *lista, char *placa)
     anterior = temp;
     temp = temp->prox;
   }
-  printf("Carro com a placa -> %s, encontrado e removido!\n", temp->c->placa);
   free(temp);
   return lista;
 }
